@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parent Panel — OPS Passion School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #FFF9F0;
+  --bg2:     #FFF0DC;
+  --surface: #FFFFFF;
+  --border:  rgba(217,119,6,0.12);
+  --border2: rgba(217,119,6,0.25);
+  --text:    #1C1008;
+  --text2:   #6B4E1E;
+  --text3:   #B89060;
+  --accent:  #D97706;
+  --accent2: #F59E0B;
+  --green:   #059669;
+  --blue:    #2563EB;
+  --purple:  #7C3AED;
+  --red:     #DC2626;
+  --font-d:  'Tajawal', sans-serif;
+  --font-b:  'Cairo', sans-serif;
+  --r:       16px;
+  --r-sm:    10px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--font-b); background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ── CODE ENTRY SCREEN ── */
+.code-screen {
+  position:fixed; inset:0;
+  background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  z-index:1000; transition:opacity .4s ease;
+  overflow:hidden;
+}
+.code-screen.hidden { opacity:0; pointer-events:none; }
+
+.code-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse at 20% 80%, rgba(217,119,6,.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 10%, rgba(245,158,11,.06) 0%, transparent 50%);
+}
+
+.code-dots {
+  position:absolute; inset:0;
+  background-image:radial-gradient(circle,rgba(217,119,6,.06) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+
+.code-card {
+  position:relative;
+  width:420px; max-width:92vw;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:28px;
+  padding:44px 40px;
+  box-shadow:0 24px 80px rgba(217,119,6,.12);
+  text-align:center;
+}
+
+.code-logo {
+  display:flex; align-items:center; justify-content:center;
+  gap:12px; margin-bottom:32px;
+}
+.code-logo-mark {
+  width:48px; height:48px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-d); font-weight:900; font-size:16px; color:#fff;
+  box-shadow:0 6px 20px rgba(217,119,6,.3);
+}
+.code-logo-text { font-family:var(--font-d); font-size:15px; font-weight:700; text-align:right; }
+.code-logo-text span { display:block; font-size:11px; font-weight:400; color:var(--text3); }
+
+.code-title { font-family:var(--font-d); font-size:26px; font-weight:900; margin-bottom:8px; color:var(--text); }
+.code-sub { font-size:14px; color:var(--text2); margin-bottom:36px; line-height:1.6; }
+
+.code-input-wrap { position:relative; margin-bottom:16px; }
+.code-input {
+  width:100%;
+  padding:16px 20px;
+  background:var(--bg2);
+  border:2px solid var(--border);
+  border-radius:var(--r-sm);
+  color:var(--text);
+  font-size:20px; font-weight:700;
+  font-family:monospace;
+  text-align:center;
+  letter-spacing:4px;
+  outline:none;
+  transition:all .2s;
+  direction:ltr;
+  text-transform:uppercase;
+}
+.code-input:focus { border-color:var(--accent); background:var(--surface); box-shadow:0 0 0 4px rgba(217,119,6,.08); }
+.code-input::placeholder { font-size:14px; letter-spacing:0; font-family:var(--font-b); font-weight:400; color:var(--text3); }
+
+.code-btn {
+  width:100%; padding:15px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none; border-radius:var(--r-sm); color:#fff;
+  font-size:16px; font-weight:700; font-family:var(--font-b);
+  cursor:pointer; transition:all .25s;
+  box-shadow:0 6px 24px rgba(217,119,6,.35);
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.code-btn:hover { transform:translateY(-2px); box-shadow:0 10px 32px rgba(217,119,6,.45); }
+.code-btn:active { transform:translateY(0); }
+
+.code-err {
+  font-size:13px; color:var(--red);
+  margin-top:12px; display:none;
+  background:rgba(220,38,38,.06);
+  border:1px solid rgba(220,38,38,.15);
+  border-radius:var(--r-sm); padding:10px 14px;
+}
+
+.code-help { font-size:12px; color:var(--text3); margin-top:20px; line-height:1.6; }
+.code-help a { color:var(--accent); text-decoration:none; font-weight:600; }
+
+/* ── MAIN APP ── */
+.app { display:none; min-height:100vh; flex-direction:column; }
+.app.visible { display:flex; }
+
+/* ── TOP HEADER ── */
+.app-header {
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:0 5%;
+  height:64px;
+  display:flex; align-items:center; justify-content:space-between;
+  position:sticky; top:0; z-index:40;
+  box-shadow:0 2px 12px rgba(217,119,6,.06);
+}
+
+.header-logo { display:flex; align-items:center; gap:10px; }
+.header-logo-mark {
+  width:36px; height:36px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-d); font-weight:900; font-size:13px; color:#fff;
+}
+.header-logo-text { font-family:var(--font-d); font-size:14px; font-weight:700; }
+.header-logo-text span { display:block; font-size:10px; font-weight:400; color:var(--text3); }
+
+.header-child {
+  display:flex; align-items:center; gap:10px;
+  background:var(--bg2);
+  border:1px solid var(--border2);
+  border-radius:100px;
+  padding:6px 14px 6px 8px;
+}
+.header-child-av {
+  width:32px; height:32px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:700; color:#fff;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+}
+.header-child-name { font-size:13px; font-weight:700; color:var(--text); }
+.header-child-code { font-size:10px; color:var(--text3); direction:ltr; font-family:monospace; }
+
+.header-logout {
+  padding:7px 14px; border-radius:100px;
+  background:transparent; border:1px solid var(--border2);
+  color:var(--text2); font-size:12px; font-weight:600;
+  font-family:var(--font-b); cursor:pointer; transition:all .2s;
+}
+.header-logout:hover { background:rgba(220,38,38,.06); color:var(--red); border-color:rgba(220,38,38,.2); }
+
+/* ── CONTENT ── */
+.content { max-width:900px; margin:0 auto; padding:32px 5% 60px; width:100%; }
+
+/* ── WELCOME BANNER ── */
+.welcome-banner {
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:24px;
+  padding:28px 32px;
+  margin-bottom:28px;
+  color:#fff;
+  position:relative;
+  overflow:hidden;
+}
+.welcome-banner::before {
+  content:'';
+  position:absolute; top:-30px; left:-30px;
+  width:160px; height:160px; border-radius:50%;
+  background:rgba(255,255,255,.08);
+}
+.welcome-banner::after {
+  content:'';
+  position:absolute; bottom:-40px; left:30%;
+  width:200px; height:200px; border-radius:50%;
+  background:rgba(255,255,255,.05);
+}
+.wb-content { position:relative; z-index:1; }
+.wb-greeting { font-size:14px; font-weight:500; opacity:.85; margin-bottom:6px; }
+.wb-name { font-family:var(--font-d); font-size:28px; font-weight:900; margin-bottom:6px; }
+.wb-sub { font-size:14px; opacity:.8; }
+.wb-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(255,255,255,.2);
+  border:1px solid rgba(255,255,255,.3);
+  border-radius:100px;
+  padding:5px 14px;
+  font-size:12px; font-weight:700;
+  margin-top:14px;
+}
+
+/* ── STATS ── */
+.stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+.stat {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:20px;
+  text-align:center;
+  transition:all .25s;
+}
+.stat:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(217,119,6,.08); border-color:var(--border2); }
+.stat-icon { font-size:28px; margin-bottom:10px; }
+.stat-n { font-family:var(--font-d); font-size:32px; font-weight:900; color:var(--text); line-height:1; margin-bottom:4px; }
+.stat-l { font-size:12px; font-weight:600; color:var(--text2); }
+
+/* ── SECTION TITLE ── */
+.sec-title {
+  font-family:var(--font-d);
+  font-size:18px; font-weight:800;
+  color:var(--text); margin-bottom:16px;
+  display:flex; align-items:center; gap:8px;
+}
+.sec-title::after {
+  content:'';
+  flex:1; height:1px;
+  background:var(--border2);
+  margin-right:12px;
+}
+
+/* ── PATTERN CARD ── */
+.pattern-reveal {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:24px;
+  margin-bottom:28px;
+  position:relative;
+  overflow:hidden;
+}
+.pattern-reveal::before {
+  content:'';
+  position:absolute; top:0; right:0; left:0; height:4px;
+}
+.pat-explorer::before  { background:linear-gradient(90deg,#ea580c,#f97316); }
+.pat-maker::before     { background:linear-gradient(90deg,#059669,#10b981); }
+.pat-storyteller::before{ background:linear-gradient(90deg,#d97706,#f59e0b); }
+.pat-performer::before { background:linear-gradient(90deg,#2563eb,#3b82f6); }
+.pat-organizer::before { background:linear-gradient(90deg,#7c3aed,#a855f7); }
+
+.pattern-top { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+.pattern-icon-big { font-size:48px; }
+.pattern-info { flex:1; }
+.pattern-label { font-size:12px; font-weight:700; color:var(--text3); letter-spacing:.06em; text-transform:uppercase; margin-bottom:4px; }
+.pattern-name { font-family:var(--font-d); font-size:26px; font-weight:900; color:var(--text); line-height:1.1; }
+.pattern-name-en { font-size:13px; color:var(--text3); margin-top:2px; }
+.pattern-desc { font-size:14px; color:var(--text2); line-height:1.8; margin-bottom:16px; }
+
+.pattern-subjects { display:flex; flex-wrap:wrap; gap:8px; }
+.subject-pill {
+  display:inline-flex; align-items:center; gap:5px;
+  padding:6px 14px; border-radius:100px;
+  font-size:12px; font-weight:600;
+  border:1px solid;
+}
+
+/* ── SESSIONS ── */
+.sessions-list { display:flex; flex-direction:column; gap:12px; margin-bottom:28px; }
+.session-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r-sm);
+  padding:16px 20px;
+  display:flex; align-items:flex-start; gap:16px;
+  transition:all .2s;
+}
+.session-card:hover { border-color:var(--border2); box-shadow:0 4px 12px rgba(217,119,6,.06); }
+.session-date-box {
+  background:var(--bg2);
+  border-radius:10px;
+  padding:8px 12px;
+  text-align:center;
+  flex-shrink:0; min-width:56px;
+}
+.sdb-day { font-family:var(--font-d); font-size:20px; font-weight:900; color:var(--accent); line-height:1; }
+.sdb-month { font-size:10px; font-weight:600; color:var(--text3); }
+.session-info { flex:1; }
+.session-subject { font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px; }
+.session-notes { font-size:13px; color:var(--text2); line-height:1.6; }
+.session-eng { margin-top:6px; }
+
+/* ── PROGRESS ── */
+.progress-card {
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  padding:20px 24px;
+  margin-bottom:28px;
+}
+.prog-title { font-size:13px; font-weight:600; color:var(--text2); margin-bottom:8px; display:flex; justify-content:space-between; }
+.prog-bar { height:10px; background:var(--bg2); border-radius:100px; overflow:hidden; margin-bottom:6px; }
+.prog-fill { height:100%; border-radius:100px; background:linear-gradient(90deg,var(--accent),var(--accent2)); transition:width .8s ease; }
+.prog-sub { font-size:12px; color:var(--text3); }
+
+/* ── PENDING CARD ── */
+.pending-card {
+  background:var(--surface);
+  border:2px dashed var(--border2);
+  border-radius:var(--r);
+  padding:32px;
+  text-align:center;
+  margin-bottom:28px;
+}
+.pending-icon { font-size:40px; margin-bottom:12px; }
+.pending-title { font-family:var(--font-d); font-size:18px; font-weight:800; color:var(--text); margin-bottom:8px; }
+.pending-desc { font-size:13px; color:var(--text2); line-height:1.7; }
+.pending-steps { display:flex; flex-direction:column; gap:10px; margin-top:20px; text-align:right; }
+.pending-step { display:flex; align-items:center; gap:12px; background:var(--bg2); border-radius:var(--r-sm); padding:12px 14px; }
+.ps-num { width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; background:var(--accent); flex-shrink:0; }
+.ps-text { font-size:13px; color:var(--text2); }
+.ps-text strong { color:var(--text); }
+
+/* ── EMPTY STATE ── */
+.empty-state { text-align:center; padding:48px 20px; color:var(--text3); }
+.empty-icon { font-size:40px; margin-bottom:12px; opacity:.4; }
+.empty-text { font-size:14px; }
+
+/* ── LOADING SKELETON ── */
+.skeleton { background:linear-gradient(90deg,var(--bg2) 25%,var(--border) 50%,var(--bg2) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
+@keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* ── LOADING SCREEN ── */
+.loading-overlay {
+  position:fixed; inset:0;
+  background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  z-index:500; transition:opacity .4s;
+}
+.loading-overlay.hidden { opacity:0; pointer-events:none; }
+.loading-spinner {
+  width:44px; height:44px;
+  border:3px solid var(--border2);
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+
+/* ── RESPONSIVE ── */
+@media (max-width:600px) {
+  .stats-row { grid-template-columns:1fr 1fr; }
+  .welcome-banner { padding:20px; }
+  .wb-name { font-size:22px; }
+  .pattern-icon-big { font-size:36px; }
+  .pattern-name { font-size:20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── LOADING ── -->
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+</div>
+
+<!-- ── CODE ENTRY ── -->
+<div class="code-screen" id="codeScreen">
+  <div class="code-bg"></div>
+  <div class="code-dots"></div>
+  <div class="code-card">
+    <div class="code-logo">
+      <div class="code-logo-mark">OPS</div>
+      <div class="code-logo-text">
+        OPS Passion School
+        <span>بوابة متابعة الوالدين</span>
+      </div>
+    </div>
+    <h1 class="code-title">أهلاً بيك 👋</h1>
+    <p class="code-sub">
+      ادخل الكود الخاص بك عشان تتابع رحلة طفلك<br>
+      في مدرسة OPS للشغف
+    </p>
+    <div class="code-input-wrap">
+      <input
+        class="code-input"
+        id="codeInput"
+        placeholder="OPS-XXXXXXXX"
+        maxlength="14"
+        oninput="formatCode(this)"
+        onkeydown="if(event.key==='Enter')doEnterCode()"
+      >
+    </div>
+    <button class="code-btn" onclick="doEnterCode()">
+      <span>دخول على بوابتي</span>
+      <span style="font-size:18px;">←</span>
+    </button>
+    <div class="code-err" id="codeErr">الكود غلط أو منتهي الصلاحية — تواصل مع الإدارة</div>
+    <p class="code-help">
+      لو محتاج مساعدة تواصل معنا على
+      <a href="https://wa.me/" target="_blank">واتس آب</a>
+    </p>
+  </div>
+</div>
+
+<!-- ── MAIN APP ── -->
+<div class="app" id="mainApp">
+
+  <!-- HEADER -->
+  <header class="app-header">
+    <div class="header-logo">
+      <div class="header-logo-mark">OPS</div>
+      <div class="header-logo-text">
+        Passion School
+        <span>بوابة الوالدين</span>
+      </div>
+    </div>
+    <div class="header-child">
+      <div class="header-child-av" id="hChildAv">ط</div>
+      <div>
+        <div class="header-child-name" id="hChildName">—</div>
+        <div class="header-child-code" id="hChildCode">—</div>
+      </div>
+    </div>
+    <button class="header-logout" onclick="doLogout()">🚪 خروج</button>
+  </header>
+
+  <!-- CONTENT -->
+  <div class="content" id="mainContent">
+    <!-- يتعبئ ديناميكياً -->
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs0PpO-67gZsRSO7sxZTHi_q1HSoQAHNHoO628LpAOgmJLiH85xGc9WH3XQzvqkkP3KA/exec";
+let studentData = null;
+let sessionData = [];
+
+// ════ CODE FORMAT ════
+function formatCode(input) {
+  let val = input.value.replace(/[^A-Z0-9a-z-]/g,'').toUpperCase();
+  if (val.length > 3 && val[3] !== '-') val = val.slice(0,3) + '-' + val.slice(3);
+  input.value = val;
+}
+
+// ════ ENTER CODE ════
+async function doEnterCode() {
+  const code = document.getElementById('codeInput').value.trim().toUpperCase();
+  if (!code) return;
+
+  const btn = document.querySelector('.code-btn');
+  btn.innerHTML = '<div style="width:20px;height:20px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;"></div>';
+  btn.disabled = true;
+  document.getElementById('codeErr').style.display = 'none';
+
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=verifyCode&code=${encodeURIComponent(code)}`, { redirect:'follow' });
+    const data = await res.json();
+
+    if (data.valid) {
+      studentData = data;
+      showLoading();
+      loadStudentData(data.studentId);
+    } else {
+      showError(data.error || 'الكود غلط');
+    }
+  } catch(e) {
+    // Demo mode
+    studentData = {
+      valid: true,
+      studentId: 'OPS-2501-DEMO',
+      childName: 'أحمد محمد',
+      parentName: 'محمد أحمد',
+      status: 'ملتحق',
+      learningPattern: 'المستكشف',
+      sessionsCount: 7
+    };
+    showLoading();
+    setTimeout(() => loadDemoData(), 800);
+  }
+
+  btn.innerHTML = '<span>دخول على بوابتي</span><span style="font-size:18px;">←</span>';
+  btn.disabled = false;
+}
+
+function showError(msg) {
+  const err = document.getElementById('codeErr');
+  err.textContent = msg; err.style.display = 'block';
+}
+
+function showLoading() {
+  document.getElementById('loadingOverlay').classList.remove('hidden');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.add('hidden');
+}
+
+// ════ LOAD DATA ════
+async function loadStudentData(studentId) {
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=getStudentProgress&code=${encodeURIComponent(document.getElementById('codeInput').value.trim())}`, { redirect:'follow' });
+    const data = await res.json();
+
+    if (data.success) {
+      studentData = { ...studentData, ...data.student };
+      sessionData = data.sessions || [];
+      renderApp();
+    } else {
+      loadDemoData();
+    }
+  } catch(e) {
+    loadDemoData();
+  }
+}
+
+function loadDemoData() {
+  studentData = {
+    childName:      'أحمد محمد',
+    parentName:     'محمد أحمد',
+    status:         'ملتحق',
+    learningPattern:'المستكشف',
+    sessionsCount:  7,
+    pfpActive:      'true'
+  };
+  sessionData = [
+    { date: new Date(Date.now()-2*86400000), notes:'[رياضيات] تفاعل: ممتاز | تعلم الضرب والقسمة باستخدام الألعاب التفاعلية', duration:60 },
+    { date: new Date(Date.now()-7*86400000), notes:'[علوم] تفاعل: ممتاز | استكشاف المجموعة الشمسية بالنماذج ثلاثية الأبعاد', duration:60 },
+    { date: new Date(Date.now()-12*86400000), notes:'[إنجليزي] تفاعل: جيد | مفردات الطبيعة والاكتشاف عبر قصص تفاعلية', duration:45 },
+    { date: new Date(Date.now()-18*86400000), notes:'[عربي] تفاعل: ممتاز | تأليف قصة قصيرة عن رحلة استكشافية', duration:60 },
+  ];
+  renderApp();
+}
+
+// ════ RENDER APP ════
+function renderApp() {
+  hideLoading();
+
+  // إخفاء شاشة الكود
+  document.getElementById('codeScreen').classList.add('hidden');
+  setTimeout(() => document.getElementById('codeScreen').style.display = 'none', 400);
+
+  // إظهار الـ App
+  document.getElementById('mainApp').classList.add('visible');
+
+  // تحديث الهيدر
+  const name = studentData.childName || '—';
+  document.getElementById('hChildAv').textContent   = name[0];
+  document.getElementById('hChildName').textContent = name;
+  document.getElementById('hChildCode').textContent = document.getElementById('codeInput').value.trim().toUpperCase();
+
+  // رسم المحتوى
+  const status = studentData.status || '';
+  const isEnrolled = status === 'ملتحق' || studentData.sessionsCount > 0;
+
+  if (isEnrolled) {
+    renderEnrolledView();
+  } else {
+    renderPendingView(status);
+  }
+}
+
+// ════ ENROLLED VIEW ════
+function renderEnrolledView() {
+  const pattern  = studentData.learningPattern || '';
+  const sessions = parseInt(studentData.sessionsCount) || 0;
+  const name     = studentData.childName || '—';
+  const patClass = { 'المستكشف':'pat-explorer','المبتكر':'pat-maker','الحكّاء':'pat-storyteller','المؤدي':'pat-performer','المنظم':'pat-organizer' };
+  const patData  = getPatternData(pattern);
+
+  document.getElementById('mainContent').innerHTML = `
+
+    <!-- Welcome Banner -->
+    <div class="welcome-banner ${patClass[pattern]||''}">
+      <div class="wb-content">
+        <div class="wb-greeting">أهلاً يا ${studentData.parentName||'الوالد'} 👋</div>
+        <div class="wb-name">رحلة ${name} 🚀</div>
+        <div class="wb-sub">تابع تقدم طفلك في مدرسة OPS للشغف</div>
+        ${pattern ? `<div class="wb-badge">${patData.icon} ${pattern}</div>` : ''}
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat">
+        <div class="stat-icon">📚</div>
+        <div class="stat-n">${sessions}</div>
+        <div class="stat-l">سيشنات مكتملة</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">⚡</div>
+        <div class="stat-n">${sessionData.length > 0 ? calcAvgEngagement() : '—'}</div>
+        <div class="stat-l">متوسط التفاعل</div>
+      </div>
+      <div class="stat">
+        <div class="stat-icon">🎯</div>
+        <div class="stat-n">${pattern ? patData.icon : '—'}</div>
+        <div class="stat-l">نمط التعلم</div>
+      </div>
+    </div>
+
+    ${pattern ? renderPatternCard(pattern, patData, patClass[pattern]) : ''}
+
+    ${renderProgressCard(sessions)}
+
+    <!-- Sessions -->
+    <div class="sec-title">📅 آخر السيشنات</div>
+    ${renderSessions()}
+
+  `;
+
+  // تحريك Progress Bar
+  setTimeout(() => {
+    const fills = document.querySelectorAll('.prog-fill');
+    fills.forEach(f => {
+      const target = f.dataset.target;
+      if (target) f.style.width = target + '%';
+    });
+  }, 300);
+}
+
+function renderPatternCard(pattern, patData, patClass) {
+  return `
+    <div class="sec-title">🎯 نمط تعلّم ${studentData.childName||'طفلك'}</div>
+    <div class="pattern-reveal ${patClass}">
+      <div class="pattern-top">
+        <div class="pattern-icon-big">${patData.icon}</div>
+        <div class="pattern-info">
+          <div class="pattern-label">نمط التعلم المحدد</div>
+          <div class="pattern-name">${pattern}</div>
+          <div class="pattern-name-en">${patData.en}</div>
+        </div>
+      </div>
+      <p class="pattern-desc">${patData.desc}</p>
+      <div class="pattern-subjects">
+        ${patData.subjects.map(s=>`
+          <span class="subject-pill" style="background:${patData.color}12;color:${patData.color};border-color:${patData.color}30;">
+            ${s}
+          </span>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function renderProgressCard(sessions) {
+  const maxSessions = 20;
+  const pct = Math.min((sessions/maxSessions)*100, 100);
+  return `
+    <div class="sec-title">📈 تقدم الرحلة</div>
+    <div class="progress-card">
+      <div class="prog-title">
+        <span>مسيرة التعلم</span>
+        <span style="color:var(--accent);font-weight:800;">${sessions} سيشن</span>
+      </div>
+      <div class="prog-bar">
+        <div class="prog-fill" data-target="${pct}" style="width:0%"></div>
+      </div>
+      <div class="prog-sub">${sessions} سيشن مكتملة من ${maxSessions} في المرحلة الأولى</div>
+    </div>
+  `;
+}
+
+function renderSessions() {
+  if (!sessionData || sessionData.length === 0) {
+    return `
+      <div class="empty-state">
+        <div class="empty-icon">📅</div>
+        <div class="empty-text">لا توجد سيشنات مسجلة بعد</div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="sessions-list">
+      ${sessionData.slice(0,6).map(s => {
+        const d = new Date(s.date);
+        const day = d.getDate();
+        const month = d.toLocaleDateString('ar-EG',{month:'short'});
+        const noteParts = (s.notes||'').split('|');
+        const subject = noteParts[0]?.replace(/[\[\]]/g,'').trim() || '—';
+        const engagement = noteParts[1]?.replace('تفاعل:','').trim() || '';
+        const learned = noteParts[2]?.trim() || s.notes || '—';
+        const engColor = {ممتاز:'#059669',جيد:'#2563eb',متوسط:'#d97706',ضعيف:'#dc2626'};
+        const ec = engColor[engagement] || 'var(--text3)';
+        return `
+          <div class="session-card">
+            <div class="session-date-box">
+              <div class="sdb-day">${day}</div>
+              <div class="sdb-month">${month}</div>
+            </div>
+            <div class="session-info">
+              <div class="session-subject">${subject} — ${s.duration||60} دقيقة</div>
+              <div class="session-notes">${learned}</div>
+              ${engagement ? `
+                <div class="session-eng">
+                  <span style="background:${ec}12;color:${ec};padding:3px 10px;border-radius:100px;font-size:11px;font-weight:700;border:1px solid ${ec}25;">
+                    تفاعل: ${engagement}
+                  </span>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ════ PENDING VIEW ════
+function renderPendingView(status) {
+  const stages = {
+    'جديد':          { step:1, title:'طلبك وصلنا! ✅',          desc:'تم استلام طلب التسجيل وهو قيد المراجعة من فريقنا.' },
+    'قيد المراجعة': { step:1, title:'طلبك تحت المراجعة 🔍',     desc:'فريقنا بيراجع بيانات طفلك دلوقتي.' },
+    'مقبول':         { step:2, title:'تم القبول! 🎉',             desc:'مبروك! طلبك اتقبل وفريق SCE هيتواصل معك قريباً.' },
+    'PSCE مكتمل':   { step:3, title:'اجتماع PSCE اتعمل ✅',      desc:'تم الاجتماع معك، دلوقتي في انتظار جلسة تقييم طفلك.' },
+    'SCE مكتمل':    { step:4, title:'جلسة الطفل اتعملت 🎯',      desc:'تم تقييم طفلك بنجاح، وجاري تحليل النتائج.' },
+    'تم التحليل':   { step:5, title:'التحليل جاهز! 🤖',           desc:'تم تحديد نمط تعلم طفلك، هيتواصل معك الفريق قريباً لمناقشة النتائج.' },
+  };
+
+  const stageInfo = stages[status] || stages['جديد'];
+  const name = studentData.childName || '—';
+
+  document.getElementById('mainContent').innerHTML = `
+    <div class="welcome-banner" style="background:linear-gradient(135deg,var(--accent),var(--accent2));">
+      <div class="wb-content">
+        <div class="wb-greeting">أهلاً يا ${studentData.parentName||'الوالد'} 👋</div>
+        <div class="wb-name">رحلة ${name}</div>
+        <div class="wb-sub">رحلة اكتشاف شغف طفلك بدأت!</div>
+      </div>
+    </div>
+
+    <div class="pending-card">
+      <div class="pending-icon">⏳</div>
+      <div class="pending-title">${stageInfo.title}</div>
+      <div class="pending-desc">${stageInfo.desc}</div>
+
+      <div class="pending-steps">
+        ${renderJourneySteps(stageInfo.step)}
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px;text-align:center;">
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;">محتاج مساعدة؟</div>
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">فريقنا جاهز يساعدك على واتس آب</div>
+      <a href="https://wa.me/" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(5,150,105,.1);color:#059669;border:1px solid rgba(5,150,105,.2);border-radius:100px;font-size:13px;font-weight:700;text-decoration:none;transition:all .2s;">
+        📱 تواصل معنا
+      </a>
+    </div>
+  `;
+}
+
+function renderJourneySteps(currentStep) {
+  const steps = [
+    { num:1, title:'تسجيل الطلب',       desc:'تم استلام بيانات طفلك', done:currentStep>=1 },
+    { num:2, title:'القبول',             desc:'مراجعة الطلب والموافقة', done:currentStep>=2 },
+    { num:3, title:'اجتماع PSCE',        desc:'اجتماع مع فريق التقييم', done:currentStep>=3 },
+    { num:4, title:'جلسة SCE للطفل',    desc:'جلسة اكتشاف شخصية طفلك', done:currentStep>=4 },
+    { num:5, title:'تحليل النتائج',      desc:'تحديد نمط تعلم طفلك', done:currentStep>=5 },
+    { num:6, title:'بدء الكورس',         desc:'الرحلة الحقيقية تبدأ!', done:currentStep>=6 },
+  ];
+
+  return steps.map(s => `
+    <div class="pending-step" style="opacity:${s.done?1:0.4}">
+      <div class="ps-num" style="background:${s.done?'var(--accent)':'var(--text3)'}">
+        ${s.done ? '✓' : s.num}
+      </div>
+      <div class="ps-text">
+        <strong>${s.title}</strong> — ${s.desc}
+      </div>
+    </div>
+  `).join('');
+}
+
+// ════ LOGOUT ════
+function doLogout() {
+  studentData = null; sessionData = [];
+  document.getElementById('mainApp').classList.remove('visible');
+  document.getElementById('codeScreen').style.display = 'flex';
+  document.getElementById('codeScreen').classList.remove('hidden');
+  document.getElementById('codeInput').value = '';
+  document.getElementById('codeErr').style.display = 'none';
+  document.getElementById('mainContent').innerHTML = '';
+}
+
+// ════ PATTERN DATA ════
+function getPatternData(pattern) {
+  const data = {
+    'المستكشف': {
+      icon: '🔭', en: 'The Explorer', color: '#ea580c',
+      desc: 'طفلك بيتعلم بالبحث والاستكشاف — دايماً بيسأل "ليه؟" و"إزاي؟". بنعلّمه المواد الأساسية من خلال التجارب والاكتشافات العلمية.',
+      subjects: ['🔬 أسرار الكون','🧪 المختبر الصغير','📐 رياضيات الاستكشاف','🌍 العلوم التطبيقية']
+    },
+    'المبتكر': {
+      icon: '⚙️', en: 'The Maker', color: '#059669',
+      desc: 'طفلك بيتعلم بالتحديات والبناء — بيحوّل الأفكار لمنتجات حقيقية. بنعلّمه من خلال مشاريع التصميم والبرمجة.',
+      subjects: ['🎨 تفكير التصميم','💻 البرمجة بالكتل','🔧 هندسة المشاريع','📊 رياضيات التصميم']
+    },
+    'الحكّاء': {
+      icon: '📚', en: 'The Storyteller', color: '#d97706',
+      desc: 'طفلك بيتعلم بالقصص والسرد — بيحوّل كل حاجة لحدوتة ممتعة. بنعلّمه اللغات والمواد من خلال القصص والوسائط.',
+      subjects: ['📖 صناعة القصص','🎬 الوسائط الرقمية','✍️ الكتابة الإبداعية','🗣️ فن التواصل']
+    },
+    'المؤدي': {
+      icon: '🎭', en: 'The Performer', color: '#2563eb',
+      desc: 'طفلك بيتعلم بالحركة والتمثيل — جسمه كله بيشارك في التعلم. بنعلّمه من خلال التمثيل والحركة والقيادة.',
+      subjects: ['🎭 فنون الأداء','👑 مهارات القيادة','🎤 التواصل العام','⚽ التعلم بالحركة']
+    },
+    'المنظم': {
+      icon: '📋', en: 'The Organizer', color: '#7c3aed',
+      desc: 'طفلك بيتعلم بالتصنيف والنظم — بيحب الوضوح والترتيب. بنعلّمه من خلال إدارة الموارد والتفكير المنطقي.',
+      subjects: ['📊 إدارة الموارد','🧮 المنطق المالي','📁 التنظيم والتخطيط','🔢 رياضيات التحليل']
+    }
+  };
+  return data[pattern] || { icon:'🌟', en:'', color:'var(--accent)', desc:'', subjects:[] };
+}
+
+function calcAvgEngagement() {
+  if (!sessionData || sessionData.length === 0) return '—';
+  const map = { ممتاز:5, جيد:4, متوسط:3, ضعيف:2 };
+  let total = 0, count = 0;
+  sessionData.forEach(s => {
+    const eng = (s.notes||'').split('|')[1]?.replace('تفاعل:','').trim();
+    if (map[eng]) { total += map[eng]; count++; }
+  });
+  if (count === 0) return '—';
+  const avg = total/count;
+  if (avg >= 4.5) return '🌟';
+  if (avg >= 3.5) return '👍';
+  if (avg >= 2.5) return '😐';
+  return '📈';
+}
+
+// Enter key on code screen
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !document.getElementById('codeScreen').classList.contains('hidden')) {
+    doEnterCode();
+  }
+});
+</script>
+</body>
+</html>

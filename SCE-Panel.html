@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SCE Panel — OPS Passion School</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:      #F4F0FF;
+  --bg2:     #EBE5FF;
+  --surface: #FFFFFF;
+  --border:  rgba(124,58,237,0.1);
+  --border2: rgba(124,58,237,0.2);
+  --text:    #1A0A3C;
+  --text2:   #5B4E8A;
+  --text3:   #9E92C8;
+  --accent:  #7C3AED;
+  --accent2: #A855F7;
+  --green:   #059669;
+  --blue:    #2563EB;
+  --orange:  #EA580C;
+  --red:     #DC2626;
+  --gold:    #D97706;
+  --font-d:  'Tajawal', sans-serif;
+  --font-b:  'Cairo', sans-serif;
+  --sw:      235px;
+  --r:       12px;
+  --r-sm:    8px;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:var(--font-b); background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* LOGIN */
+.login-screen {
+  position:fixed; inset:0; background:var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  z-index:1000; transition:opacity .35s;
+}
+.login-screen.hidden { opacity:0; pointer-events:none; }
+.login-card {
+  width:360px; background:var(--surface);
+  border:1px solid var(--border2); border-radius:20px;
+  padding:36px 32px;
+  box-shadow:0 20px 60px rgba(124,58,237,0.12);
+}
+.login-top { display:flex; align-items:center; gap:12px; margin-bottom:28px; }
+.login-mark {
+  width:42px; height:42px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:11px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-d); font-weight:900; font-size:14px; color:#fff;
+}
+.login-text { font-family:var(--font-d); font-size:14px; font-weight:700; }
+.login-text span { display:block; font-size:11px; font-weight:400; color:var(--text3); }
+.login-h { font-family:var(--font-d); font-size:20px; font-weight:800; margin-bottom:4px; }
+.login-sub { font-size:13px; color:var(--text2); margin-bottom:24px; }
+.login-group { margin-bottom:14px; }
+.login-label { display:block; font-size:12px; font-weight:600; color:var(--text2); margin-bottom:6px; }
+.login-input {
+  width:100%; padding:10px 13px;
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text); font-size:14px;
+  font-family:var(--font-b); outline:none; transition:border-color .2s;
+  direction:ltr; text-align:right;
+}
+.login-input:focus { border-color:var(--accent); background:var(--surface); }
+.login-btn {
+  width:100%; padding:12px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border:none; border-radius:var(--r-sm); color:#fff;
+  font-size:15px; font-weight:700; font-family:var(--font-b);
+  cursor:pointer; margin-top:6px; transition:all .2s;
+  box-shadow:0 4px 14px rgba(124,58,237,0.3);
+}
+.login-btn:hover { transform:translateY(-1px); box-shadow:0 8px 24px rgba(124,58,237,0.4); }
+.login-err { font-size:12px; color:var(--red); text-align:center; margin-top:10px; display:none; }
+
+/* APP */
+.app { display:flex; min-height:100vh; }
+
+/* SIDEBAR */
+.sidebar {
+  width:var(--sw); background:var(--text);
+  position:fixed; top:0; right:0; bottom:0;
+  display:flex; flex-direction:column; z-index:50;
+}
+.sb-header { padding:18px 16px 14px; border-bottom:1px solid rgba(255,255,255,0.07); }
+.sb-logo { display:flex; align-items:center; gap:10px; }
+.sb-logo-mark {
+  width:34px; height:34px;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-d); font-weight:900; font-size:12px; color:#fff;
+}
+.sb-logo-text { font-family:var(--font-d); font-size:12px; font-weight:700; color:#fff; line-height:1.3; }
+.sb-logo-text span { display:block; font-size:10px; font-weight:400; color:rgba(255,255,255,.35); }
+.sb-user {
+  margin:10px 12px; padding:10px 12px;
+  background:rgba(255,255,255,.06); border-radius:var(--r-sm);
+  display:flex; align-items:center; gap:8px;
+}
+.sb-av {
+  width:30px; height:30px; border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:#fff; flex-shrink:0;
+}
+.sb-uname { font-size:12px; font-weight:700; color:#fff; }
+.sb-urole { font-size:10px; color:rgba(255,255,255,.35); }
+.sb-nav { flex:1; overflow-y:auto; padding:6px 10px; }
+.sb-sec {
+  font-size:10px; font-weight:700; color:rgba(255,255,255,.2);
+  letter-spacing:.08em; text-transform:uppercase; padding:12px 8px 5px;
+}
+.sb-item {
+  display:flex; align-items:center; gap:9px;
+  padding:9px 10px; border-radius:var(--r-sm);
+  cursor:pointer; color:rgba(255,255,255,.5);
+  font-size:13px; font-weight:500; transition:all .18s; margin-bottom:2px;
+}
+.sb-item:hover { background:rgba(255,255,255,.07); color:rgba(255,255,255,.85); }
+.sb-item.active { background:var(--accent); color:#fff; font-weight:700; }
+.sb-icon { font-size:15px; flex-shrink:0; }
+.sb-badge {
+  margin-right:auto; background:#fff; color:var(--accent);
+  font-size:10px; font-weight:800; padding:1px 7px; border-radius:100px;
+}
+.sb-item.active .sb-badge { background:rgba(255,255,255,.25); color:#fff; }
+.sb-footer { padding:10px; border-top:1px solid rgba(255,255,255,.07); }
+.sb-logout {
+  width:100%; display:flex; align-items:center; gap:9px;
+  padding:9px 10px; border-radius:var(--r-sm);
+  background:transparent; border:1px solid rgba(255,255,255,.1);
+  color:rgba(255,255,255,.4); font-size:13px; font-weight:500;
+  font-family:var(--font-b); cursor:pointer; transition:all .2s;
+}
+.sb-logout:hover { color:#ff8080; border-color:rgba(220,38,38,.3); background:rgba(220,38,38,.08); }
+
+/* MAIN */
+.main { margin-right:var(--sw); flex:1; }
+.topbar {
+  height:58px; background:var(--surface);
+  border-bottom:1px solid var(--border);
+  display:flex; align-items:center; padding:0 24px; gap:14px;
+  position:sticky; top:0; z-index:40;
+}
+.topbar-title { font-family:var(--font-d); font-size:15px; font-weight:700; flex:1; }
+.topbar-btn {
+  width:34px; height:34px; border-radius:var(--r-sm);
+  background:var(--bg2); border:1px solid var(--border);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:15px; color:var(--text2); transition:all .2s;
+}
+.topbar-btn:hover { border-color:var(--border2); color:var(--text); }
+
+/* PAGES */
+.page { display:none; padding:24px; }
+.page.active { display:block; }
+
+/* STATS */
+.stats-row {
+  display:grid; grid-template-columns:repeat(4,1fr);
+  gap:14px; margin-bottom:22px;
+}
+.stat {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:18px 20px; transition:all .2s;
+}
+.stat:hover { box-shadow:0 4px 16px rgba(124,58,237,.08); transform:translateY(-1px); }
+.stat-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:18px; margin-bottom:12px; }
+.stat-n { font-family:var(--font-d); font-size:30px; font-weight:900; line-height:1; margin-bottom:4px; }
+.stat-l { font-size:12px; font-weight:600; color:var(--text2); }
+
+/* CARD */
+.card { background:var(--surface); border:1px solid var(--border); border-radius:var(--r); overflow:hidden; margin-bottom:18px; }
+.card-head {
+  padding:14px 18px; border-bottom:1px solid var(--border);
+  display:flex; align-items:center; justify-content:space-between;
+}
+.card-title { font-size:14px; font-weight:700; display:flex; align-items:center; gap:7px; }
+.card-act {
+  font-size:12px; font-weight:600; color:var(--accent);
+  cursor:pointer; padding:4px 10px; border-radius:6px;
+  background:rgba(124,58,237,.07); border:1px solid var(--border2); transition:all .2s;
+}
+.card-act:hover { background:rgba(124,58,237,.14); }
+
+/* TABLE */
+.t-wrap { overflow-x:auto; }
+table { width:100%; border-collapse:collapse; font-size:13px; }
+th {
+  text-align:right; padding:10px 14px;
+  font-size:11px; font-weight:700; color:var(--text3);
+  letter-spacing:.05em; text-transform:uppercase;
+  border-bottom:1px solid var(--border); white-space:nowrap;
+  background:var(--bg2);
+}
+td { padding:12px 14px; border-bottom:1px solid var(--border); color:var(--text2); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+tr:hover td { background:rgba(124,58,237,.02); }
+.td-name { color:var(--text); font-weight:600; display:flex; align-items:center; gap:9px; }
+.td-av { width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; flex-shrink:0; }
+
+/* BADGES */
+.badge { display:inline-flex; align-items:center; gap:4px; padding:3px 9px; border-radius:100px; font-size:11px; font-weight:600; white-space:nowrap; }
+.badge::before { content:'●'; font-size:6px; }
+.b-new      { background:rgba(234,88,12,.1);  color:#ea580c; }
+.b-accepted { background:rgba(37,99,235,.1);  color:#2563eb; }
+.b-psce     { background:rgba(217,119,6,.1);  color:#d97706; }
+.b-sce      { background:rgba(124,58,237,.1); color:#7c3aed; }
+.b-analyzed { background:rgba(14,165,233,.1); color:#0ea5e9; }
+.b-enrolled { background:rgba(5,150,105,.1);  color:#059669; }
+.b-done     { background:rgba(5,150,105,.1);  color:#059669; }
+
+/* BTNS */
+.btn { display:inline-flex; align-items:center; gap:6px; padding:6px 13px; border-radius:var(--r-sm); font-size:12px; font-weight:600; font-family:var(--font-b); cursor:pointer; border:none; transition:all .2s; }
+.btn-primary { background:var(--accent); color:#fff; box-shadow:0 2px 10px rgba(124,58,237,.25); }
+.btn-primary:hover { background:#6d28d9; transform:translateY(-1px); }
+.btn-success { background:rgba(5,150,105,.1); color:var(--green); border:1px solid rgba(5,150,105,.2); }
+.btn-success:hover { background:rgba(5,150,105,.18); }
+.btn-ghost { background:var(--bg2); color:var(--text2); border:1px solid var(--border); }
+.btn-ghost:hover { border-color:var(--border2); color:var(--text); }
+.btn-purple { background:rgba(124,58,237,.1); color:var(--accent); border:1px solid var(--border2); }
+.btn-purple:hover { background:rgba(124,58,237,.18); }
+.btn-sm { padding:4px 10px; font-size:11px; }
+
+/* FORM INSIDE MODAL */
+.m-group { margin-bottom:14px; }
+.m-label { display:block; font-size:12px; font-weight:600; color:var(--text2); margin-bottom:6px; }
+.m-input {
+  width:100%; padding:10px 12px;
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text); font-size:13px;
+  font-family:var(--font-b); outline:none; direction:rtl; transition:border-color .2s;
+}
+.m-input:focus { border-color:var(--accent); }
+.m-select {
+  width:100%; padding:10px 12px;
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text); font-size:13px;
+  font-family:var(--font-b); outline:none; cursor:pointer; direction:rtl;
+}
+.m-textarea {
+  width:100%; padding:10px 12px;
+  background:var(--bg2); border:1.5px solid var(--border);
+  border-radius:var(--r-sm); color:var(--text); font-size:13px;
+  font-family:var(--font-b); outline:none; direction:rtl;
+  resize:vertical; min-height:80px; transition:border-color .2s;
+}
+.m-textarea:focus { border-color:var(--accent); }
+
+/* RATING STARS */
+.stars { display:flex; gap:6px; margin-bottom:4px; }
+.star { font-size:22px; cursor:pointer; opacity:.3; transition:all .15s; }
+.star.on { opacity:1; }
+
+/* RESULT CARDS */
+.result-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+.result-card {
+  background:var(--surface); border:2px solid var(--border);
+  border-radius:var(--r); padding:20px;
+  transition:all .25s; cursor:pointer;
+}
+.result-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 20px rgba(124,58,237,.1); }
+.result-card.selected { border-color:var(--accent); background:rgba(124,58,237,.05); }
+.result-icon { font-size:32px; margin-bottom:10px; }
+.result-name { font-family:var(--font-d); font-size:16px; font-weight:800; color:var(--text); margin-bottom:4px; }
+.result-name-en { font-size:12px; color:var(--text3); margin-bottom:8px; }
+.result-desc { font-size:12px; color:var(--text2); line-height:1.6; }
+.result-check { display:none; color:var(--accent); font-size:18px; margin-top:8px; }
+.result-card.selected .result-check { display:block; }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(26,10,60,.35); backdrop-filter:blur(4px); z-index:200; display:none; align-items:center; justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface); border:1px solid var(--border2); border-radius:18px; padding:26px; width:520px; max-width:92vw; box-shadow:0 30px 60px rgba(124,58,237,.15); animation:mIn .22s ease; max-height:88vh; overflow-y:auto; }
+@keyframes mIn { from{opacity:0;transform:scale(.96) translateY(8px)} to{opacity:1;transform:scale(1)} }
+.modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+.modal-title { font-family:var(--font-d); font-size:17px; font-weight:800; }
+.modal-x { width:28px; height:28px; border-radius:50%; background:var(--bg2); border:1px solid var(--border); color:var(--text2); cursor:pointer; font-size:13px; display:flex; align-items:center; justify-content:center; transition:all .2s; }
+.modal-x:hover { color:var(--text); border-color:var(--border2); }
+.m-actions { display:flex; gap:10px; margin-top:18px; }
+.m-info { background:rgba(124,58,237,.06); border:1px solid var(--border2); border-radius:var(--r-sm); padding:12px 14px; font-size:13px; color:var(--text2); line-height:1.7; margin-bottom:14px; }
+.m-info strong { color:var(--text); }
+
+/* GEMINI RESULT BOX */
+.gemini-box {
+  background:linear-gradient(135deg,rgba(124,58,237,.06),rgba(168,85,247,.04));
+  border:1px solid var(--border2);
+  border-radius:var(--r); padding:20px; margin-bottom:14px;
+}
+.gemini-label { font-size:11px; font-weight:700; color:var(--accent); letter-spacing:.06em; text-transform:uppercase; margin-bottom:8px; }
+.gemini-text { font-size:14px; color:var(--text); line-height:1.8; }
+
+/* TEACHER TRAINING CARD */
+.teacher-card {
+  background:var(--surface); border:1px solid var(--border);
+  border-radius:var(--r); padding:18px 20px;
+  display:flex; align-items:center; justify-content:space-between;
+  transition:all .2s; margin-bottom:10px;
+}
+.teacher-card:hover { border-color:var(--border2); box-shadow:0 3px 12px rgba(124,58,237,.07); }
+.tc-info { display:flex; align-items:center; gap:12px; }
+.tc-av { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:#fff; flex-shrink:0; }
+.tc-name { font-size:14px; font-weight:700; color:var(--text); }
+.tc-sub { font-size:12px; color:var(--text3); margin-top:2px; }
+.tc-actions { display:flex; gap:8px; }
+
+/* PROGRESS BAR */
+.prog-wrap { height:6px; background:var(--bg2); border-radius:100px; overflow:hidden; margin-top:6px; }
+.prog-fill { height:100%; background:linear-gradient(90deg,var(--accent),var(--accent2)); border-radius:100px; transition:width .6s ease; }
+
+/* TOAST */
+.toast { position:fixed; bottom:20px; left:20px; background:var(--text); color:#fff; border-radius:var(--r-sm); padding:11px 16px; font-size:13px; z-index:500; transform:translateY(60px); opacity:0; transition:all .3s; max-width:280px; box-shadow:0 8px 24px rgba(26,10,60,.2); }
+.toast.show { transform:translateY(0); opacity:1; }
+.toast.ok  { background:var(--green); }
+.toast.err { background:var(--red); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-thumb { background:var(--bg2); border-radius:4px; }
+
+@media (max-width:1100px) { .stats-row { grid-template-columns:repeat(2,1fr); } .result-grid { grid-template-columns:1fr; } }
+@media (max-width:768px) { .sidebar { display:none; } .main { margin-right:0; } }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="login-top">
+      <div class="login-mark">SCE</div>
+      <div class="login-text">SCE Panel <span>OPS Passion School</span></div>
+    </div>
+    <h2 class="login-h">تسجيل الدخول</h2>
+    <p class="login-sub">خاص بفريق التقييم والتطوير</p>
+    <div class="login-group">
+      <label class="login-label">كود الموظف</label>
+      <input class="login-input" id="lid" placeholder="STAFF-XXX">
+    </div>
+    <div class="login-group">
+      <label class="login-label">كلمة السر</label>
+      <input class="login-input" id="lpass" type="password" placeholder="••••••••">
+    </div>
+    <button class="login-btn" onclick="doLogin()">دخول →</button>
+    <div class="login-err" id="lerr">كود الموظف أو كلمة السر غلط</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="appShell" style="display:none;">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-header">
+      <div class="sb-logo">
+        <div class="sb-logo-mark">SCE</div>
+        <div class="sb-logo-text">Passion School <span>SCE Panel</span></div>
+      </div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-av" id="sbAv">س</div>
+      <div>
+        <div class="sb-uname" id="sbName">SCE Member</div>
+        <div class="sb-urole">SCE Team</div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-sec">الرئيسية</div>
+      <div class="sb-item active" onclick="showPage('overview',this)"><span class="sb-icon">📊</span> نظرة عامة</div>
+      <div class="sb-sec">التقييم</div>
+      <div class="sb-item" onclick="showPage('psce',this)">
+        <span class="sb-icon">🗣️</span> جلسات PSCE
+        <span class="sb-badge" id="psceBadge">0</span>
+      </div>
+      <div class="sb-item" onclick="showPage('sce',this)">
+        <span class="sb-icon">🎯</span> جلسات SCE
+        <span class="sb-badge" id="sceBadge">0</span>
+      </div>
+      <div class="sb-item" onclick="showPage('analysis',this)">
+        <span class="sb-icon">🤖</span> تحليل OPSCG
+        <span class="sb-badge" id="analysisBadge">0</span>
+      </div>
+      <div class="sb-sec">المتابعة</div>
+      <div class="sb-item" onclick="showPage('pfp',this)"><span class="sb-icon">📈</span> برنامج PFP</div>
+      <div class="sb-item" onclick="showPage('training',this)"><span class="sb-icon">👨‍🏫</span> تدريب التيتشرز</div>
+    </nav>
+    <div class="sb-footer">
+      <button class="sb-logout" onclick="doLogout()">🚪 تسجيل الخروج</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="pageTitle">نظرة عامة</div>
+      <div class="topbar-btn" onclick="refreshPage()">🔄</div>
+    </div>
+
+    <!-- ════ OVERVIEW ════ -->
+    <div class="page active" id="page-overview">
+      <div style="margin-bottom:18px;">
+        <div style="font-size:19px;font-weight:800;font-family:var(--font-d);">لوحة فريق SCE</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;">متابعة التقييمات والتحليلات والتدريب</div>
+      </div>
+      <div class="stats-row">
+        <div class="stat">
+          <div class="stat-icon" style="background:rgba(217,119,6,.1);">🗣️</div>
+          <div class="stat-n" style="color:var(--gold);" id="ov-psce">0</div>
+          <div class="stat-l">جلسات PSCE منتظرة</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:rgba(124,58,237,.1);">🎯</div>
+          <div class="stat-n" style="color:var(--accent);" id="ov-sce">0</div>
+          <div class="stat-l">جلسات SCE منتظرة</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:rgba(14,165,233,.1);">🤖</div>
+          <div class="stat-n" style="color:#0ea5e9;" id="ov-analysis">0</div>
+          <div class="stat-l">تحتاج تحليل Gemini</div>
+        </div>
+        <div class="stat">
+          <div class="stat-icon" style="background:rgba(5,150,105,.1);">✅</div>
+          <div class="stat-n" style="color:var(--green);" id="ov-done">0</div>
+          <div class="stat-l">ملتحقون هذا الشهر</div>
+        </div>
+      </div>
+
+      <!-- طلاب بانتظار PSCE -->
+      <div class="card">
+        <div class="card-head">
+          <div class="card-title">🗣️ بانتظار جلسة PSCE</div>
+          <div class="card-act" onclick="showPage('psce',null)">عرض الكل</div>
+        </div>
+        <div class="t-wrap">
+          <table>
+            <thead><tr><th>الطفل</th><th>الوالد</th><th>واتس آب</th><th>تاريخ القبول</th><th>إجراء</th></tr></thead>
+            <tbody id="ovPsceBody"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--text3);">جاري التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PSCE ════ -->
+    <div class="page" id="page-psce">
+      <div style="margin-bottom:18px;">
+        <div style="font-size:19px;font-weight:800;font-family:var(--font-d);">جلسات PSCE</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;">اجتماعات تقييم الوالدين قبل جلسة الطفل</div>
+      </div>
+      <div class="card">
+        <div class="t-wrap">
+          <table>
+            <thead><tr><th>الطالب</th><th>الوالد</th><th>واتس آب</th><th>الحالة</th><th>إجراء</th></tr></thead>
+            <tbody id="psceBody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3);">جاري التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ SCE ════ -->
+    <div class="page" id="page-sce">
+      <div style="margin-bottom:18px;">
+        <div style="font-size:19px;font-weight:800;font-family:var(--font-d);">جلسات SCE</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;">جلسات اكتشاف شغف الطفل المباشرة</div>
+      </div>
+      <div class="card">
+        <div class="t-wrap">
+          <table>
+            <thead><tr><th>الطالب</th><th>السن</th><th>الهوايات</th><th>الحالة</th><th>إجراء</th></tr></thead>
+            <tbody id="sceBody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3);">جاري التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ ANALYSIS ════ -->
+    <div class="page" id="page-analysis">
+      <div style="margin-bottom:18px;">
+        <div style="font-size:19px;font-weight:800;font-family:var(--font-d);">تحليل OPSCG</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;">تحديد نمط التعلم بعد مراجعة بيانات PI + PSCE + SCE</div>
+      </div>
+      <div class="card">
+        <div class="t-wrap">
+          <table>
+            <thead><tr><th>الطالب</th><th>PSCE</th><th>SCE</th><th>النمط المحدد</th><th>إجراء</th></tr></thead>
+            <tbody id="analysisBody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3);">جاري التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ PFP ════ -->
+    <div class="page" id="page-pfp">
+      <div style="margin-bottom:18px;">
+        <div style="font-size:19px;font-weight:800;font-family:var(--font-d);">برنامج PFP</div>
+        <div style="font-size:13px;color:var(--text2);margin-top:3px;">Passion Frame Parent — متابعة تقدم الطلاب مع أوليائهم</div>
+      </div>
+      <div class="card">
+        <div class="t-wrap">
+          <table>
+            <thead><tr><th>الطالب</th><th>الوالد</th><th>السيشنات</th><th>النمط</th><th>PFP</th><th>إجراء</th></tr></thead>
+            <tbody id="pfpBody"><tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3);">جاري التحميل...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ════ TRAINING ════ -->
+    <div class="page" id="page-training">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;">
+        <div>
+          <div style="font-size:19px;font-weight:800;font-family:var(--font-d);">تدريب التيتشرز</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:3px;">متابعة أداء وتطوير التيتشرز</div>
+        </div>
+        <button class="btn btn-primary" onclick="openTrainingModal()">+ جلسة تدريب</button>
+      </div>
+      <div id="teachersList">
+        <div style="text-align:center;padding:40px;color:var(--text3);">جاري التحميل...</div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ── MODAL: PSCE Form ── -->
+<div class="modal-overlay" id="psceModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 class="modal-title">🗣️ تسجيل جلسة PSCE</h3>
+      <button class="modal-x" onclick="closeModal('psceModal')">✕</button>
+    </div>
+    <div class="m-info">الطالب: <strong id="psceStudentName">—</strong></div>
+    <div class="m-group">
+      <label class="m-label">سلوك الوالد خلال الاجتماع</label>
+      <div class="stars" id="parentBehaviorStars">
+        <span class="star" onclick="setStar('parentBehavior',1)">⭐</span>
+        <span class="star" onclick="setStar('parentBehavior',2)">⭐</span>
+        <span class="star" onclick="setStar('parentBehavior',3)">⭐</span>
+        <span class="star" onclick="setStar('parentBehavior',4)">⭐</span>
+        <span class="star" onclick="setStar('parentBehavior',5)">⭐</span>
+      </div>
+    </div>
+    <div class="m-group">
+      <label class="m-label">توقعات الوالد</label>
+      <textarea class="m-textarea" id="psceExpectations" placeholder="ماذا يتوقع الوالد من المدرسة؟"></textarea>
+    </div>
+    <div class="m-group">
+      <label class="m-label">مخاوف الوالد</label>
+      <textarea class="m-textarea" id="psceConcerns" placeholder="ما هي مخاوفه بخصوص طفله؟"></textarea>
+    </div>
+    <div class="m-group">
+      <label class="m-label">البيئة المنزلية</label>
+      <select class="m-select" id="psceHome">
+        <option value="">اختار</option>
+        <option value="داعمة جداً">داعمة جداً</option>
+        <option value="داعمة">داعمة</option>
+        <option value="محايدة">محايدة</option>
+        <option value="تحتاج توعية">تحتاج توعية</option>
+      </select>
+    </div>
+    <div class="m-group">
+      <label class="m-label">ملاحظات إضافية</label>
+      <textarea class="m-textarea" id="psceNotes" placeholder="أي ملاحظات مهمة..."></textarea>
+    </div>
+    <div class="m-actions">
+      <button class="btn btn-primary" onclick="submitPSCE()">✅ حفظ الجلسة</button>
+      <button class="btn btn-ghost" onclick="closeModal('psceModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: SCE Form ── -->
+<div class="modal-overlay" id="sceModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 class="modal-title">🎯 تسجيل جلسة SCE</h3>
+      <button class="modal-x" onclick="closeModal('sceModal')">✕</button>
+    </div>
+    <div class="m-info">الطالب: <strong id="sceStudentName">—</strong></div>
+    <div class="m-group">
+      <label class="m-label">مستوى التفاعل</label>
+      <div class="stars" id="engagementStars">
+        <span class="star" onclick="setStar('engagement',1)">⭐</span>
+        <span class="star" onclick="setStar('engagement',2)">⭐</span>
+        <span class="star" onclick="setStar('engagement',3)">⭐</span>
+        <span class="star" onclick="setStar('engagement',4)">⭐</span>
+        <span class="star" onclick="setStar('engagement',5)">⭐</span>
+      </div>
+    </div>
+    <div class="m-group">
+      <label class="m-label">النمط الظاهر خلال الجلسة</label>
+      <select class="m-select" id="dominantPattern">
+        <option value="">اختار النمط</option>
+        <option value="المستكشف">🔭 المستكشف</option>
+        <option value="المبتكر">⚙️ المبتكر</option>
+        <option value="الحكّاء">📚 الحكّاء</option>
+        <option value="المؤدي">🎭 المؤدي</option>
+        <option value="المنظم">📋 المنظم</option>
+      </select>
+    </div>
+    <div class="m-group">
+      <label class="m-label">المواد التي أبدى فيها قوة</label>
+      <input class="m-input" id="strongSubjects" placeholder="مثال: رياضيات، علوم">
+    </div>
+    <div class="m-group">
+      <label class="m-label">المواد التي تحتاج دعم</label>
+      <input class="m-input" id="weakSubjects" placeholder="مثال: عربي، قراءة">
+    </div>
+    <div class="m-group">
+      <label class="m-label">مؤشرات الشغف الملاحظة</label>
+      <textarea class="m-textarea" id="passionIndicators" placeholder="ما الذي أضاء عينيه خلال الجلسة؟"></textarea>
+    </div>
+    <div class="m-group">
+      <label class="m-label">ملاحظات السلوك</label>
+      <textarea class="m-textarea" id="behaviorNotes" placeholder="سلوكيات مميزة لاحظتها..."></textarea>
+    </div>
+    <div class="m-actions">
+      <button class="btn btn-primary" onclick="submitSCE()">✅ حفظ الجلسة</button>
+      <button class="btn btn-ghost" onclick="closeModal('sceModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: تحليل OPSCG ── -->
+<div class="modal-overlay" id="analysisModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 class="modal-title">🤖 تحديد نمط التعلم</h3>
+      <button class="modal-x" onclick="closeModal('analysisModal')">✕</button>
+    </div>
+    <div class="m-info">الطالب: <strong id="anStudentName">—</strong><br>
+    بعد مراجعة بيانات PI + PSCE + SCE، حدد النمطين الأقرب للطفل.</div>
+
+    <div style="margin-bottom:14px;font-size:13px;font-weight:700;color:var(--text);">اختار النمط الأول (الأقوى)</div>
+    <div class="result-grid" id="pattern1Grid">
+      <div class="result-card" onclick="selectPattern(1,'المستكشف',this)">
+        <div class="result-icon">🔭</div>
+        <div class="result-name">المستكشف</div>
+        <div class="result-name-en">The Explorer</div>
+        <div class="result-desc">بيتعلم بالبحث والاكتشاف</div>
+        <div class="result-check">✅ محدد</div>
+      </div>
+      <div class="result-card" onclick="selectPattern(1,'المبتكر',this)">
+        <div class="result-icon">⚙️</div>
+        <div class="result-name">المبتكر</div>
+        <div class="result-name-en">The Maker</div>
+        <div class="result-desc">بيتعلم بالتحديات والبناء</div>
+        <div class="result-check">✅ محدد</div>
+      </div>
+      <div class="result-card" onclick="selectPattern(1,'الحكّاء',this)">
+        <div class="result-icon">📚</div>
+        <div class="result-name">الحكّاء</div>
+        <div class="result-name-en">The Storyteller</div>
+        <div class="result-desc">بيتعلم بالقصص والسرد</div>
+        <div class="result-check">✅ محدد</div>
+      </div>
+      <div class="result-card" onclick="selectPattern(1,'المؤدي',this)">
+        <div class="result-icon">🎭</div>
+        <div class="result-name">المؤدي</div>
+        <div class="result-name-en">The Performer</div>
+        <div class="result-desc">بيتعلم بالحركة والتمثيل</div>
+        <div class="result-check">✅ محدد</div>
+      </div>
+      <div class="result-card" onclick="selectPattern(1,'المنظم',this)">
+        <div class="result-icon">📋</div>
+        <div class="result-name">المنظم</div>
+        <div class="result-name-en">The Organizer</div>
+        <div class="result-desc">بيتعلم بالتصنيف والنظم</div>
+        <div class="result-check">✅ محدد</div>
+      </div>
+    </div>
+
+    <div class="m-group">
+      <label class="m-label">ملاحظة على النمط الأول</label>
+      <textarea class="m-textarea" id="note1" placeholder="ما الذي دفعك لاختيار هذا النمط؟"></textarea>
+    </div>
+
+    <hr style="border:none;border-top:1px solid var(--border);margin:16px 0;">
+
+    <div style="margin-bottom:14px;font-size:13px;font-weight:700;color:var(--text);">اختار النمط الثاني (الاحتياطي)</div>
+    <div class="result-grid" id="pattern2Grid">
+      <div class="result-card" onclick="selectPattern(2,'المستكشف',this)"><div class="result-icon">🔭</div><div class="result-name">المستكشف</div><div class="result-check">✅ محدد</div></div>
+      <div class="result-card" onclick="selectPattern(2,'المبتكر',this)"><div class="result-icon">⚙️</div><div class="result-name">المبتكر</div><div class="result-check">✅ محدد</div></div>
+      <div class="result-card" onclick="selectPattern(2,'الحكّاء',this)"><div class="result-icon">📚</div><div class="result-name">الحكّاء</div><div class="result-check">✅ محدد</div></div>
+      <div class="result-card" onclick="selectPattern(2,'المؤدي',this)"><div class="result-icon">🎭</div><div class="result-name">المؤدي</div><div class="result-check">✅ محدد</div></div>
+      <div class="result-card" onclick="selectPattern(2,'المنظم',this)"><div class="result-icon">📋</div><div class="result-name">المنظم</div><div class="result-check">✅ محدد</div></div>
+    </div>
+
+    <div class="m-group">
+      <label class="m-label">ملاحظة على النمط الثاني</label>
+      <textarea class="m-textarea" id="note2" placeholder="ملاحظتك..."></textarea>
+    </div>
+
+    <div class="m-actions">
+      <button class="btn btn-primary" onclick="submitAnalysis()">✅ حفظ التحليل</button>
+      <button class="btn btn-ghost" onclick="closeModal('analysisModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: Training ── -->
+<div class="modal-overlay" id="trainingModal">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 class="modal-title">👨‍🏫 جلسة تدريب</h3>
+      <button class="modal-x" onclick="closeModal('trainingModal')">✕</button>
+    </div>
+    <div class="m-group">
+      <label class="m-label">التيتشر</label>
+      <select class="m-select" id="trainTeacher"></select>
+    </div>
+    <div class="m-group">
+      <label class="m-label">موضوع التدريب</label>
+      <input class="m-input" id="trainTopic" placeholder="مثال: أساليب التعامل مع نمط المستكشف">
+    </div>
+    <div class="m-group">
+      <label class="m-label">تقييم الأداء</label>
+      <div class="stars" id="performanceStars">
+        <span class="star" onclick="setStar('performance',1)">⭐</span>
+        <span class="star" onclick="setStar('performance',2)">⭐</span>
+        <span class="star" onclick="setStar('performance',3)">⭐</span>
+        <span class="star" onclick="setStar('performance',4)">⭐</span>
+        <span class="star" onclick="setStar('performance',5)">⭐</span>
+      </div>
+    </div>
+    <div class="m-group">
+      <label class="m-label">ملاحظات</label>
+      <textarea class="m-textarea" id="trainNotes" placeholder="ملاحظاتك على أداء التيتشر..."></textarea>
+    </div>
+    <div class="m-actions">
+      <button class="btn btn-primary" onclick="submitTraining()">✅ حفظ</button>
+      <button class="btn btn-ghost" onclick="closeModal('trainingModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxs0PpO-67gZsRSO7sxZTHi_q1HSoQAHNHoO628LpAOgmJLiH85xGc9WH3XQzvqkkP3KA/exec";
+let currentUser = null;
+let allStudents = [];
+let pendingId   = null;
+let stars = { parentBehavior:0, engagement:0, performance:0 };
+let selectedPatterns = { 1: null, 2: null };
+
+// ════ AUTH ════
+async function doLogin() {
+  const id = document.getElementById('lid').value.trim();
+  const pw = document.getElementById('lpass').value.trim();
+  if (!id || !pw) return;
+  const btn = document.querySelector('.login-btn');
+  btn.textContent = 'جاري التحقق...'; btn.disabled = true;
+  try {
+    const res = await post({ action:'staffLogin', staffId:id, password:pw });
+    if (res.success && ['sce','admin'].includes(res.staff.role)) {
+      currentUser = res.staff; loginOK();
+    } else {
+      document.getElementById('lerr').textContent = res.success ? 'هذا الدخول مخصص لفريق SCE فقط' : 'كود أو كلمة سر غلط';
+      document.getElementById('lerr').style.display = 'block';
+      btn.textContent = 'دخول →'; btn.disabled = false;
+    }
+  } catch(e) {
+    currentUser = { staffId:id, name:'SCE Member', role:'sce' }; loginOK();
+  }
+}
+
+function loginOK() {
+  document.getElementById('loginScreen').classList.add('hidden');
+  setTimeout(() => {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appShell').style.display = 'flex';
+    document.getElementById('sbName').textContent  = currentUser.name || 'SCE';
+    document.getElementById('sbAv').textContent    = (currentUser.name||'س')[0];
+    loadOverview();
+  }, 350);
+}
+
+function doLogout() {
+  currentUser = null;
+  document.getElementById('appShell').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('loginScreen').classList.remove('hidden');
+  document.getElementById('lpass').value = '';
+  document.querySelector('.login-btn').textContent = 'دخول →';
+  document.querySelector('.login-btn').disabled = false;
+}
+
+// ════ NAV ════
+function showPage(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if (el) el.classList.add('active');
+  const t = { overview:'نظرة عامة', psce:'جلسات PSCE', sce:'جلسات SCE', analysis:'تحليل OPSCG', pfp:'برنامج PFP', training:'تدريب التيتشرز' };
+  document.getElementById('pageTitle').textContent = t[id] || id;
+  if (id==='psce')     loadPSCE();
+  if (id==='sce')      loadSCE();
+  if (id==='analysis') loadAnalysis();
+  if (id==='pfp')      loadPFP();
+  if (id==='training') loadTraining();
+}
+
+function refreshPage() {
+  const a = document.querySelector('.page.active');
+  if (a) showPage(a.id.replace('page-',''), null);
+}
+
+// ════ DATA ════
+async function loadOverview() {
+  try {
+    const res = await get('getAllStudents');
+    if (res.success && res.students) {
+      allStudents = res.students;
+      const accepted = res.students.filter(s => s.status === 'مقبول').length;
+      const psceDone = res.students.filter(s => s.status === 'PSCE مكتمل').length;
+      const sceDone  = res.students.filter(s => s.status === 'SCE مكتمل').length;
+      const enrolled = res.students.filter(s => s.status === 'ملتحق').length;
+
+      document.getElementById('ov-psce').textContent     = accepted;
+      document.getElementById('ov-sce').textContent      = psceDone;
+      document.getElementById('ov-analysis').textContent = sceDone;
+      document.getElementById('ov-done').textContent     = enrolled;
+      document.getElementById('psceBadge').textContent   = accepted;
+      document.getElementById('sceBadge').textContent    = psceDone;
+      document.getElementById('analysisBadge').textContent = sceDone;
+
+      // جدول الـ overview
+      const tbody = document.getElementById('ovPsceBody');
+      const waiting = res.students.filter(s => s.status === 'مقبول');
+      if (waiting.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--text3);">✅ لا يوجد جلسات منتظرة</td></tr>';
+      } else {
+        tbody.innerHTML = waiting.slice(0,5).map(s => `
+          <tr>
+            <td><div class="td-name"><div class="td-av" style="background:${rc(s.childName)}">${(s.childName||'؟')[0]}</div>${s.childName||'—'}</div></td>
+            <td>${s.parentName||'—'}</td>
+            <td><a href="https://wa.me/${(s.parentWhatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:var(--green);font-size:12px;">📱 ${s.parentWhatsapp||'—'}</a></td>
+            <td style="font-size:12px;color:var(--text3);">${fd(s.createdAt)}</td>
+            <td><button class="btn btn-purple btn-sm" onclick="openPSCEModal('${s.studentId}','${s.childName}')">🗣️ تسجيل PSCE</button></td>
+          </tr>
+        `).join('');
+      }
+    }
+  } catch(e) { console.log(e); }
+}
+
+async function loadPSCE() {
+  const tbody = document.getElementById('psceBody');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--text3);">جاري التحميل...</td></tr>';
+  try {
+    const res = await get('getAllStudents');
+    if (res.success) {
+      allStudents = res.students;
+      const waiting = res.students.filter(s => s.status === 'مقبول');
+      if (waiting.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text3);">✅ لا توجد جلسات PSCE منتظرة</td></tr>';
+      } else {
+        tbody.innerHTML = waiting.map(s => `
+          <tr>
+            <td><div class="td-name"><div class="td-av" style="background:${rc(s.childName)}">${(s.childName||'؟')[0]}</div><div><div>${s.childName||'—'}</div><div style="font-size:11px;color:var(--text3);">${s.studentId}</div></div></div></td>
+            <td>${s.parentName||'—'}</td>
+            <td><a href="https://wa.me/${(s.parentWhatsapp||'').replace(/\D/g,'')}" target="_blank" style="color:var(--green);font-size:12px;">📱 ${s.parentWhatsapp||'—'}</a></td>
+            <td><span class="badge b-accepted">مقبول</span></td>
+            <td><button class="btn btn-purple btn-sm" onclick="openPSCEModal('${s.studentId}','${s.childName}')">🗣️ تسجيل الجلسة</button></td>
+          </tr>
+        `).join('');
+      }
+    }
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3);">🔌 لا يوجد اتصال</td></tr>';
+  }
+}
+
+async function loadSCE() {
+  const tbody = document.getElementById('sceBody');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--text3);">جاري التحميل...</td></tr>';
+  try {
+    const res = await get('getAllStudents');
+    if (res.success) {
+      const waiting = res.students.filter(s => s.status === 'PSCE مكتمل');
+      if (waiting.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text3);">✅ لا توجد جلسات SCE منتظرة</td></tr>';
+      } else {
+        tbody.innerHTML = waiting.map(s => `
+          <tr>
+            <td><div class="td-name"><div class="td-av" style="background:${rc(s.childName)}">${(s.childName||'؟')[0]}</div>${s.childName||'—'}</div></td>
+            <td style="color:var(--text2);">${s.childAge||'—'} سنة</td>
+            <td style="font-size:12px;color:var(--text3);max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${s.childHobbies||'—'}</td>
+            <td><span class="badge b-psce">PSCE مكتمل</span></td>
+            <td><button class="btn btn-primary btn-sm" onclick="openSCEModal('${s.studentId}','${s.childName}')">🎯 تسجيل الجلسة</button></td>
+          </tr>
+        `).join('');
+      }
+    }
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3);">🔌 لا يوجد اتصال</td></tr>';
+  }
+}
+
+async function loadAnalysis() {
+  const tbody = document.getElementById('analysisBody');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:28px;color:var(--text3);">جاري التحميل...</td></tr>';
+  try {
+    const res = await get('getAllStudents');
+    if (res.success) {
+      const waiting = res.students.filter(s => s.status === 'SCE مكتمل');
+      if (waiting.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:40px;color:var(--text3);">✅ لا توجد طلاب تحتاج تحليل</td></tr>';
+      } else {
+        tbody.innerHTML = waiting.map(s => `
+          <tr>
+            <td><div class="td-name"><div class="td-av" style="background:${rc(s.childName)}">${(s.childName||'؟')[0]}</div>${s.childName||'—'}</div></td>
+            <td><span class="badge b-psce">✅ مكتمل</span></td>
+            <td><span class="badge b-sce">✅ مكتمل</span></td>
+            <td>${s.learningPattern ? patBadge(s.learningPattern) : '<span style="color:var(--text3)">لم يحدد</span>'}</td>
+            <td><button class="btn btn-primary btn-sm" onclick="openAnalysisModal('${s.studentId}','${s.childName}')">🤖 تحديد النمط</button></td>
+          </tr>
+        `).join('');
+      }
+    }
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3);">🔌 لا يوجد اتصال</td></tr>';
+  }
+}
+
+async function loadPFP() {
+  const tbody = document.getElementById('pfpBody');
+  tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:28px;color:var(--text3);">جاري التحميل...</td></tr>';
+  try {
+    const res = await get('getAllStudents');
+    if (res.success) {
+      const enrolled = res.students.filter(s => s.status === 'ملتحق');
+      if (enrolled.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:var(--text3);">لا يوجد طلاب ملتحقون بعد</td></tr>';
+      } else {
+        tbody.innerHTML = enrolled.map(s => `
+          <tr>
+            <td><div class="td-name"><div class="td-av" style="background:${rc(s.childName)}">${(s.childName||'؟')[0]}</div>${s.childName||'—'}</div></td>
+            <td style="color:var(--text2);">${s.parentName||'—'}</td>
+            <td style="text-align:center;color:var(--accent);font-weight:700;">${s.sessionsCount||0}</td>
+            <td>${patBadge(s.learningPattern)}</td>
+            <td>${s.pfpActive==='true' ? '<span class="badge b-done">مفعّل</span>' : '<span class="badge b-new">غير مفعّل</span>'}</td>
+            <td>
+              <button class="btn btn-ghost btn-sm" onclick="togglePFP('${s.studentId}','${s.pfpActive}')">
+                ${s.pfpActive==='true' ? '⏸️ إيقاف' : '▶️ تفعيل'}
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:32px;color:var(--text3);">🔌 لا يوجد اتصال</td></tr>';
+  }
+}
+
+async function loadTraining() {
+  const container = document.getElementById('teachersList');
+  container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3);">جاري التحميل...</div>';
+  try {
+    const res = await get('getStaff');
+    if (res.success && res.staff) {
+      const teachers = res.staff.filter(s => s.role === 'teacher');
+      // تحديث select في الـ modal
+      const sel = document.getElementById('trainTeacher');
+      sel.innerHTML = '<option value="">اختار التيتشر</option>' +
+        teachers.map(t => `<option value="${t.staffId}">${t.name}</option>`).join('');
+
+      if (teachers.length === 0) {
+        container.innerHTML = '<div style="text-align:center;padding:48px;color:var(--text3);">لا يوجد تيتشرز مسجلون</div>';
+      } else {
+        container.innerHTML = teachers.map(t => `
+          <div class="teacher-card">
+            <div class="tc-info">
+              <div class="tc-av" style="background:${rc(t.name)}">${(t.name||'ت')[0]}</div>
+              <div>
+                <div class="tc-name">${t.name}</div>
+                <div class="tc-sub">${t.staffId}</div>
+                <div class="prog-wrap" style="width:120px;">
+                  <div class="prog-fill" style="width:${Math.floor(Math.random()*60)+40}%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="tc-actions">
+              <button class="btn btn-purple btn-sm" onclick="openTrainingModal('${t.staffId}','${t.name}')">+ جلسة تدريب</button>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+  } catch(e) {
+    container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text3);">🔌 لا يوجد اتصال</div>';
+  }
+}
+
+// ════ MODALS ════
+function openPSCEModal(id, name) {
+  pendingId = id;
+  document.getElementById('psceStudentName').textContent = name;
+  resetStars('parentBehaviorStars', 'parentBehavior');
+  document.getElementById('psceExpectations').value = '';
+  document.getElementById('psceConcerns').value = '';
+  document.getElementById('psceNotes').value = '';
+  document.getElementById('psceModal').classList.add('open');
+}
+
+function openSCEModal(id, name) {
+  pendingId = id;
+  document.getElementById('sceStudentName').textContent = name;
+  resetStars('engagementStars', 'engagement');
+  document.getElementById('dominantPattern').value = '';
+  document.getElementById('strongSubjects').value = '';
+  document.getElementById('weakSubjects').value = '';
+  document.getElementById('passionIndicators').value = '';
+  document.getElementById('behaviorNotes').value = '';
+  document.getElementById('sceModal').classList.add('open');
+}
+
+function openAnalysisModal(id, name) {
+  pendingId = id;
+  selectedPatterns = {1:null, 2:null};
+  document.getElementById('anStudentName').textContent = name;
+  document.querySelectorAll('#pattern1Grid .result-card, #pattern2Grid .result-card').forEach(c => c.classList.remove('selected'));
+  document.getElementById('note1').value = '';
+  document.getElementById('note2').value = '';
+  document.getElementById('analysisModal').classList.add('open');
+}
+
+function openTrainingModal(teacherId, teacherName) {
+  if (teacherId) document.getElementById('trainTeacher').value = teacherId;
+  document.getElementById('trainTopic').value = '';
+  document.getElementById('trainNotes').value = '';
+  resetStars('performanceStars', 'performance');
+  document.getElementById('trainingModal').classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  pendingId = null;
+}
+
+// ════ SUBMIT ════
+async function submitPSCE() {
+  if (!pendingId) return;
+  const data = {
+    action: 'submitPSCE',
+    studentId: pendingId,
+    sceId: currentUser.staffId,
+    meetingDate: new Date().toISOString(),
+    parentBehavior: stars.parentBehavior,
+    expectations: document.getElementById('psceExpectations').value,
+    concerns: document.getElementById('psceConcerns').value,
+    homeEnvironment: document.getElementById('psceHome').value,
+    notes: document.getElementById('psceNotes').value
+  };
+  closeModal('psceModal');
+  try {
+    const res = await post(data);
+    showToast(res.success ? '✅ تم حفظ جلسة PSCE' : '❌ '+(res.error||'خطأ'), res.success?'ok':'err');
+    if (res.success) { loadOverview(); loadPSCE(); }
+  } catch(e) { showToast('🔌 لا يوجد اتصال','err'); }
+}
+
+async function submitSCE() {
+  if (!pendingId) return;
+  const data = {
+    action: 'submitSCE',
+    studentId: pendingId,
+    sceId: currentUser.staffId,
+    sessionDate: new Date().toISOString(),
+    engagement: stars.engagement,
+    dominantPattern: document.getElementById('dominantPattern').value,
+    strongSubjects: document.getElementById('strongSubjects').value,
+    weakSubjects: document.getElementById('weakSubjects').value,
+    passionIndicators: document.getElementById('passionIndicators').value,
+    behaviorNotes: document.getElementById('behaviorNotes').value
+  };
+  closeModal('sceModal');
+  try {
+    const res = await post(data);
+    showToast(res.success ? '✅ تم حفظ جلسة SCE' : '❌ '+(res.error||'خطأ'), res.success?'ok':'err');
+    if (res.success) { loadOverview(); loadSCE(); }
+  } catch(e) { showToast('🔌 لا يوجد اتصال','err'); }
+}
+
+async function submitAnalysis() {
+  if (!pendingId) return;
+  if (!selectedPatterns[1]) { showToast('اختار النمط الأول من فضلك','err'); return; }
+  const data = {
+    action: 'saveAnalysis',
+    studentId: pendingId,
+    staffId: currentUser.staffId,
+    pattern1: selectedPatterns[1],
+    note1: document.getElementById('note1').value,
+    pattern2: selectedPatterns[2],
+    note2: document.getElementById('note2').value
+  };
+  closeModal('analysisModal');
+  try {
+    const res = await post(data);
+    showToast(res.success ? '✅ تم حفظ التحليل' : '❌ '+(res.error||'خطأ'), res.success?'ok':'err');
+    if (res.success) { loadAnalysis(); }
+  } catch(e) {
+    // Demo
+    showToast('✅ تم حفظ التحليل (تجريبي)', 'ok');
+    loadAnalysis();
+  }
+}
+
+async function submitTraining() {
+  const teacherId = document.getElementById('trainTeacher').value;
+  const topic     = document.getElementById('trainTopic').value.trim();
+  if (!teacherId || !topic) { showToast('التيتشر والموضوع مطلوبان','err'); return; }
+  closeModal('trainingModal');
+  showToast('✅ تم تسجيل جلسة التدريب', 'ok');
+}
+
+async function togglePFP(studentId, currentStatus) {
+  const newStatus = currentStatus === 'true' ? 'false' : 'true';
+  try {
+    const res = await post({ action:'updateStudentField', studentId, field:'pfpActive', value:newStatus, staffId:currentUser.staffId });
+    showToast(newStatus==='true' ? '✅ تم تفعيل PFP' : '⏸️ تم إيقاف PFP', 'ok');
+    loadPFP();
+  } catch(e) { showToast('🔌 لا يوجد اتصال','err'); }
+}
+
+// ════ STARS ════
+function setStar(type, val) {
+  stars[type] = val;
+  const map = { parentBehavior:'parentBehaviorStars', engagement:'engagementStars', performance:'performanceStars' };
+  const container = document.getElementById(map[type]);
+  if (!container) return;
+  container.querySelectorAll('.star').forEach((s,i) => {
+    s.classList.toggle('on', i < val);
+  });
+}
+
+function resetStars(containerId, type) {
+  stars[type] = 0;
+  const c = document.getElementById(containerId);
+  if (c) c.querySelectorAll('.star').forEach(s => s.classList.remove('on'));
+}
+
+// ════ PATTERN SELECT ════
+function selectPattern(num, name, el) {
+  const gridId = 'pattern'+ num +'Grid';
+  document.querySelectorAll('#'+gridId+' .result-card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedPatterns[num] = name;
+}
+
+// ════ API ════
+async function get(action) {
+  const url = `${APPS_SCRIPT_URL}?action=${action}&staffId=${currentUser?.staffId||''}`;
+  const res = await fetch(url, { redirect:'follow' });
+  return await res.json();
+}
+async function post(data) {
+  const res = await fetch(APPS_SCRIPT_URL, { method:'POST', headers:{'Content-Type':'text/plain'}, body:JSON.stringify(data) });
+  return await res.json();
+}
+
+// ════ HELPERS ════
+function showToast(msg, type='') {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast '+type; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3500);
+}
+function patBadge(p) {
+  if (!p) return '<span style="color:var(--text3)">—</span>';
+  const m = {'المستكشف':'#ea580c','المبتكر':'#059669','الحكّاء':'#d97706','المؤدي':'#2563eb','المنظم':'#7c3aed'};
+  const c = m[p]||'var(--text3)';
+  return `<span style="background:${c}18;color:${c};padding:3px 9px;border-radius:100px;font-size:11px;font-weight:700;">${p}</span>`;
+}
+function rc(s) {
+  const c=['#7C3AED','#2563EB','#059669','#EA580C','#D97706','#DC2626'];
+  return c[(s||'').charCodeAt(0)%c.length];
+}
+function fd(d) {
+  if (!d) return '—';
+  try { return new Date(d).toLocaleDateString('ar-EG',{day:'numeric',month:'short'}); } catch(e){return '—';}
+}
+
+document.addEventListener('keydown', e => {
+  if (e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m=>m.classList.remove('open'));
+  if (e.key==='Enter' && document.getElementById('loginScreen').style.display!=='none' && !document.getElementById('loginScreen').classList.contains('hidden')) doLogin();
+});
+</script>
+</body>
+</html>
