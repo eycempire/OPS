@@ -1,0 +1,8 @@
+// ============================================
+// config.js — إعدادات الـ Frontend
+// OPS Passion School
+// ============================================
+// لو اتغير الـ Apps Script URL — غيّره هنا بس
+// وكل الصفحات هتاخده تلقائياً
+
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwBYOFMg578-cVLxjBJ_1hRMHkxnEysMzQv1DekwFuomjOPyjDCGqC34ViX1M1UsAkwtw/exec";
