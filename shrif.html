@@ -1,0 +1,1208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>شريف يسري — المحلل التكتيكي</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C9A84C;
+  --gold-light: #E8C97A;
+  --gold-dim: #7A6230;
+  --green: #2A6B3C;
+  --green-light: #3D9956;
+  --bg: #0A0A0A;
+  --bg2: #111111;
+  --bg3: #1A1A1A;
+  --bg4: #222222;
+  --text: #F0EDE6;
+  --text2: #A09890;
+  --border: #2A2A2A;
+  --font: 'Cairo', sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--gold-dim); border-radius: 2px; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; width: 100%; z-index: 1000;
+  background: rgba(10,10,10,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 2rem;
+  height: 64px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: all 0.3s;
+}
+nav.scrolled { background: rgba(10,10,10,0.98); }
+
+.nav-logo {
+  font-size: 1.1rem; font-weight: 700; color: var(--gold);
+  letter-spacing: 0.02em; text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo span { color: var(--text2); font-weight: 400; font-size: 0.85rem; }
+
+.nav-links {
+  display: flex; align-items: center; gap: 2rem;
+  list-style: none;
+}
+.nav-links a {
+  color: var(--text2); text-decoration: none;
+  font-size: 0.88rem; font-weight: 600;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute; bottom: -4px; right: 0;
+  width: 0; height: 1px; background: var(--gold);
+  transition: width 0.3s;
+}
+.nav-links a:hover { color: var(--gold); }
+.nav-links a:hover::after { width: 100%; }
+
+.lang-btn {
+  background: transparent;
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem; font-weight: 700;
+  cursor: pointer; transition: all 0.2s;
+  font-family: var(--font);
+}
+.lang-btn:hover { background: var(--gold); color: var(--bg); }
+
+.nav-mobile-btn {
+  display: none;
+  background: none; border: none;
+  color: var(--text); font-size: 1.4rem; cursor: pointer;
+}
+
+/* ── PAGES ── */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  padding-top: 64px;
+  display: flex; flex-direction: column;
+  position: relative; overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 40%, rgba(201,168,76,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 20% 70%, rgba(42,107,60,0.06) 0%, transparent 60%),
+    linear-gradient(180deg, #0A0A0A 0%, #0D0D0D 100%);
+}
+
+.hero-grid {
+  position: absolute; inset: 0; opacity: 0.03;
+  background-image:
+    linear-gradient(var(--gold) 1px, transparent 1px),
+    linear-gradient(90deg, var(--gold) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.hero-content {
+  position: relative; z-index: 2;
+  display: flex; flex-direction: column; justify-content: center;
+  min-height: calc(100vh - 64px);
+  padding: 4rem 4rem 4rem;
+  max-width: 900px;
+}
+
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold);
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.8rem; font-weight: 700;
+  margin-bottom: 2rem;
+  width: fit-content;
+  animation: fadeUp 0.6s ease both;
+}
+.hero-badge::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--green-light); border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+.hero-name {
+  font-size: clamp(3rem, 7vw, 6rem);
+  font-weight: 900;
+  line-height: 1.05;
+  color: var(--text);
+  margin-bottom: 0.5rem;
+  animation: fadeUp 0.6s 0.1s ease both;
+}
+.hero-name em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-title {
+  font-size: clamp(1rem, 2vw, 1.3rem);
+  color: var(--text2); font-weight: 400;
+  margin-bottom: 1.5rem;
+  animation: fadeUp 0.6s 0.2s ease both;
+}
+
+.hero-tagline {
+  font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+  color: var(--gold-light);
+  font-weight: 700;
+  font-style: italic;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.6s 0.3s ease both;
+}
+
+.hero-stats {
+  display: flex; gap: 2.5rem;
+  margin-bottom: 3rem;
+  animation: fadeUp 0.6s 0.4s ease both;
+}
+.stat { display: flex; flex-direction: column; }
+.stat-num {
+  font-size: 1.8rem; font-weight: 900; color: var(--gold);
+  line-height: 1;
+}
+.stat-label { font-size: 0.78rem; color: var(--text2); font-weight: 400; margin-top: 4px; }
+
+.hero-ctas {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.5s ease both;
+}
+
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: var(--gold);
+  color: #0A0A0A;
+  padding: 12px 28px;
+  border-radius: 4px;
+  font-family: var(--font);
+  font-size: 0.9rem; font-weight: 700;
+  text-decoration: none;
+  border: none; cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary:hover { background: var(--gold-light); transform: translateY(-2px); }
+
+.btn-secondary {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: transparent;
+  color: var(--text);
+  padding: 12px 28px;
+  border-radius: 4px;
+  font-family: var(--font);
+  font-size: 0.9rem; font-weight: 700;
+  text-decoration: none;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-secondary:hover { border-color: var(--gold); color: var(--gold); transform: translateY(-2px); }
+
+/* Social proof strip */
+.hero-proof {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  border-top: 1px solid var(--border);
+  background: rgba(10,10,10,0.8);
+  backdrop-filter: blur(8px);
+  padding: 1rem 4rem;
+  display: flex; align-items: center; gap: 2rem;
+  flex-wrap: wrap;
+  animation: fadeUp 0.6s 0.6s ease both;
+}
+.proof-label {
+  font-size: 0.75rem; color: var(--text2); font-weight: 400;
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+.proof-items { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.proof-item {
+  font-size: 0.82rem; font-weight: 700; color: var(--gold);
+  display: flex; align-items: center; gap: 6px;
+}
+.proof-item::before {
+  content: '◆'; font-size: 0.5rem; color: var(--gold-dim);
+}
+
+/* ── SECTIONS ── */
+section { padding: 5rem 4rem; }
+
+.section-header { margin-bottom: 3rem; }
+.section-label {
+  font-size: 0.75rem; font-weight: 700; color: var(--green-light);
+  text-transform: uppercase; letter-spacing: 0.15em;
+  margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.section-label::before {
+  content: ''; width: 20px; height: 1px; background: var(--green-light);
+}
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900; color: var(--text);
+  line-height: 1.1;
+}
+.section-title em {
+  font-style: normal; color: var(--gold);
+}
+
+/* ── ABOUT PREVIEW ── */
+#about-preview { background: var(--bg2); }
+.about-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4rem; align-items: center;
+}
+.about-text p {
+  color: var(--text2); line-height: 1.8; font-size: 0.95rem;
+  margin-bottom: 1.2rem;
+}
+.about-text p strong { color: var(--gold); font-weight: 700; }
+.about-highlights {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1rem; margin-top: 2rem;
+}
+.highlight-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-right: 3px solid var(--gold);
+  padding: 1rem 1.2rem;
+  border-radius: 4px;
+}
+.highlight-card .num {
+  font-size: 1.6rem; font-weight: 900; color: var(--gold);
+}
+.highlight-card .desc {
+  font-size: 0.78rem; color: var(--text2); margin-top: 2px;
+}
+
+/* ── SERVICES ── */
+#services-preview { background: var(--bg); }
+.services-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.service-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 2rem;
+  border-radius: 6px;
+  position: relative; overflow: hidden;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+.service-card::before {
+  content: ''; position: absolute;
+  top: 0; right: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, var(--gold), var(--green));
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.3s;
+}
+.service-card:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+.service-card:hover::before { transform: scaleX(1); }
+.service-icon {
+  font-size: 2rem; margin-bottom: 1rem;
+}
+.service-name {
+  font-size: 1.1rem; font-weight: 700; color: var(--text);
+  margin-bottom: 0.75rem;
+}
+.service-desc {
+  font-size: 0.85rem; color: var(--text2); line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+.service-tag {
+  display: inline-block;
+  background: rgba(42,107,60,0.15);
+  border: 1px solid rgba(42,107,60,0.3);
+  color: var(--green-light);
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem; font-weight: 700;
+}
+
+/* ── MEDIA PREVIEW ── */
+#media-preview { background: var(--bg2); }
+.media-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+.video-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 6px; overflow: hidden;
+  transition: all 0.3s;
+}
+.video-card:hover { transform: translateY(-4px); border-color: var(--gold-dim); }
+.video-thumb {
+  width: 100%; aspect-ratio: 16/9;
+  background: var(--bg4);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2.5rem; color: var(--gold);
+  position: relative; overflow: hidden;
+}
+.video-thumb iframe {
+  width: 100%; height: 100%;
+  border: none; position: absolute; inset: 0;
+}
+.video-info { padding: 1rem; }
+.video-title {
+  font-size: 0.85rem; font-weight: 600; color: var(--text);
+  line-height: 1.5; margin-bottom: 0.5rem;
+}
+.video-channel {
+  font-size: 0.75rem; color: var(--gold); font-weight: 700;
+}
+
+/* ── SOCIAL ── */
+#social-section { background: var(--bg); }
+.social-grid {
+  display: flex; gap: 1rem; flex-wrap: wrap;
+}
+.social-card {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  border-radius: 6px; text-decoration: none;
+  transition: all 0.2s;
+}
+.social-card:hover { border-color: var(--gold); transform: translateY(-2px); }
+.social-icon { font-size: 1.4rem; }
+.social-info { display: flex; flex-direction: column; }
+.social-name { font-size: 0.88rem; font-weight: 700; color: var(--text); }
+.social-handle { font-size: 0.75rem; color: var(--text2); }
+
+/* ── CONTACT ── */
+#contact-section { background: var(--bg2); }
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3rem; align-items: start;
+}
+.contact-intro p {
+  color: var(--text2); line-height: 1.8; font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+.contact-methods { display: flex; flex-direction: column; gap: 1rem; }
+.contact-method {
+  display: flex; align-items: center; gap: 1rem;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  border-radius: 6px; text-decoration: none;
+  transition: all 0.2s;
+}
+.contact-method:hover { border-color: var(--gold); }
+.contact-method-icon { font-size: 1.5rem; }
+.contact-method-info { display: flex; flex-direction: column; }
+.contact-method-label { font-size: 0.75rem; color: var(--text2); }
+.contact-method-val { font-size: 0.9rem; font-weight: 700; color: var(--gold); }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--bg);
+  border-top: 1px solid var(--border);
+  padding: 2rem 4rem;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem;
+}
+footer p { font-size: 0.78rem; color: var(--text2); }
+footer a { color: var(--gold); text-decoration: none; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-up {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fade-up.visible { opacity: 1; transform: translateY(0); }
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  nav { padding: 0 1.2rem; }
+  .nav-links { display: none; }
+  .nav-links.open {
+    display: flex; flex-direction: column;
+    position: fixed; top: 64px; right: 0; left: 0;
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 1.5rem; gap: 1.2rem; z-index: 999;
+  }
+  .nav-mobile-btn { display: block; }
+  .hero-content { padding: 2rem 1.5rem; }
+  .hero-proof { padding: 1rem 1.5rem; }
+  .hero-stats { gap: 1.5rem; flex-wrap: wrap; }
+  section { padding: 3rem 1.5rem; }
+  .about-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .services-grid { grid-template-columns: 1fr; }
+  .media-grid { grid-template-columns: 1fr; }
+  .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+  footer { flex-direction: column; text-align: center; padding: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="navbar">
+  <a href="#" class="nav-logo" onclick="showPage('home')">
+    شريف يسري
+    <span>المحلل التكتيكي</span>
+  </a>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" onclick="showPage('home')">الرئيسية</a></li>
+    <li><a href="#" onclick="showPage('about')">عن شريف</a></li>
+    <li><a href="#" onclick="showPage('services')">الخدمات</a></li>
+    <li><a href="#" onclick="showPage('blog')">المدونة</a></li>
+    <li><a href="#" onclick="showPage('media')">الظهورات</a></li>
+    <li><a href="#" onclick="showPage('contact')">تواصل</a></li>
+    <button class="lang-btn" onclick="toggleLang()" id="langBtn">EN</button>
+  </ul>
+  <div style="display:flex;gap:10px;align-items:center;">
+    <button class="lang-btn" onclick="toggleLang()" id="langBtnMobile">EN</button>
+    <button class="nav-mobile-btn" onclick="toggleMobileMenu()">☰</button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     PAGE: HOME
+══════════════════════════════════════════ -->
+<div id="page-home" class="page active">
+
+  <!-- Hero -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-badge" id="h-badge">قناة Al Ahly TV — المحلل الرسمي</div>
+      <h1 class="hero-name" id="h-name">
+        <em>شريف</em><br>يسري
+      </h1>
+      <p class="hero-title" id="h-title">محلل تكتيكي وفني — كرة القدم المصرية والعالمية</p>
+      <p class="hero-tagline" id="h-tagline">"الملعب بيتكلم أرقام — أنا بترجملك المعنى"</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-num">449K</span>
+          <span class="stat-label" id="h-s1">مشترك يوتيوب</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">658</span>
+          <span class="stat-label" id="h-s2">فيديو تحليلي</span>
+        </div>
+        <div class="stat">
+          <span class="stat-num">10+</span>
+          <span class="stat-label" id="h-s3">سنوات خبرة</span>
+        </div>
+      </div>
+      <div class="hero-ctas">
+        <a href="#" class="btn-primary" onclick="showPage('services')" id="h-cta1">🎯 اطلب خدمة</a>
+        <a href="#" class="btn-secondary" onclick="showPage('about')" id="h-cta2">تعرف على شريف</a>
+      </div>
+    </div>
+    <div class="hero-proof">
+      <span class="proof-label" id="h-proof-label">ظهر على</span>
+      <div class="proof-items">
+        <span class="proof-item">Al Ahly TV</span>
+        <span class="proof-item">OnTime Sports</span>
+        <span class="proof-item">القاهرة الإخبارية</span>
+        <span class="proof-item">الحياة</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- About Preview -->
+  <section id="about-preview" class="fade-up">
+    <div class="section-header">
+      <div class="section-label" id="ap-label">من هو شريف؟</div>
+      <h2 class="section-title" id="ap-title">المحلل الذي يقرأ <em>الملعب</em></h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p id="ap-p1">شريف يسري واحد من أبرز المحللين التكتيكيين في الكرة المصرية. بخبرة تتخطى الـ <strong>10 سنوات</strong>، بيقدر يحول الأرقام والإحصاءات لقصة تفهمها وتستمتع بيها.</p>
+        <p id="ap-p2">أسلوبه مميز — بيبدأ بالصورة الكبيرة، ينزل للتفاصيل الفنية، ويوصلها للجمهور بلغة عامية مصرية حيوية ومقنعة. صاحب قناة يوتيوب بـ <strong>449 ألف مشترك</strong> و658 فيديو تحليلي.</p>
+        <a href="#" class="btn-secondary" onclick="showPage('about')" id="ap-btn">اقرأ أكتر</a>
+      </div>
+      <div class="about-highlights">
+        <div class="highlight-card">
+          <div class="num">449K</div>
+          <div class="desc" id="ah-1">مشترك على يوتيوب</div>
+        </div>
+        <div class="highlight-card">
+          <div class="num">658</div>
+          <div class="desc" id="ah-2">فيديو تكتيكي</div>
+        </div>
+        <div class="highlight-card">
+          <div class="num">10+</div>
+          <div class="desc" id="ah-3">سنة خبرة</div>
+        </div>
+        <div class="highlight-card">
+          <div class="num">Al Ahly TV</div>
+          <div class="desc" id="ah-4">محلل رسمي</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Preview -->
+  <section id="services-preview" class="fade-up">
+    <div class="section-header">
+      <div class="section-label" id="sp-label">الخدمات</div>
+      <h2 class="section-title" id="sp-title">كيف يقدر <em>شريف</em> يساعدك؟</h2>
+    </div>
+    <div class="services-grid">
+      <div class="service-card" onclick="showPage('services')">
+        <div class="service-icon">🎬</div>
+        <div class="service-name" id="sv1-name">تحليل المباريات</div>
+        <div class="service-desc" id="sv1-desc">تقرير فيديو تكتيكي مفصل للمباراة — التشكيل، الخطة، نقاط الضعف والقوة.</div>
+        <span class="service-tag" id="sv1-tag">فيديو تكتيكي</span>
+      </div>
+      <div class="service-card" onclick="showPage('services')">
+        <div class="service-icon">♟️</div>
+        <div class="service-name" id="sv2-name">الاستشارات التكتيكية</div>
+        <div class="service-desc" id="sv2-desc">جلسات تكتيكية مخصصة للمدربين والأندية — تطوير الخطة وتحليل المنافسين.</div>
+        <span class="service-tag" id="sv2-tag">للمدربين والأندية</span>
+      </div>
+      <div class="service-card" onclick="showPage('services')">
+        <div class="service-icon">📊</div>
+        <div class="service-name" id="sv3-name">تقارير اللاعبين</div>
+        <div class="service-desc" id="sv3-desc">Scouting Reports احترافية — تقييم شامل للاعب بالأرقام والمؤشرات الفنية والتكتيكية.</div>
+        <span class="service-tag" id="sv3-tag">B2B — للأندية</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social -->
+  <section id="social-section" class="fade-up">
+    <div class="section-header">
+      <div class="section-label">تابع شريف</div>
+      <h2 class="section-title">على <em>السوشيال ميديا</em></h2>
+    </div>
+    <div class="social-grid" id="socialLinks">
+      <!-- filled by JS -->
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p id="footer-copy">© 2025 شريف يسري — جميع الحقوق محفوظة</p>
+    <p id="footer-made">صُنع بـ ❤️ للكرة المصرية</p>
+  </footer>
+
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: ABOUT
+══════════════════════════════════════════ -->
+<div id="page-about" class="page">
+  <div style="padding-top:64px; min-height:100vh;">
+    <section style="background:var(--bg2);">
+      <div class="section-header fade-up">
+        <div class="section-label">السيرة الذاتية</div>
+        <h2 class="section-title">عن <em>شريف يسري</em></h2>
+      </div>
+      <div class="about-grid fade-up">
+        <div class="about-text">
+          <p id="ab-p1">شريف يسري محلل تكتيكي وفني متخصص في كرة القدم المصرية والعالمية، بخبرة تتخطى الـ <strong>10 سنوات</strong> في التحليل والتعليق الرياضي.</p>
+          <p id="ab-p2">يتميز شريف بأسلوبه الفريد في تقديم التحليل الفني — بيبدأ بشرح سريع للأحداث الرئيسية، ثم ينتقل لتفاصيل فنية دقيقة مثل <strong>التمريرات الكاسرة، الدور المركب، والمقارنات بين اللاعبين</strong>، كل ده بلغة عامية مصرية حيوية ومشوقة.</p>
+          <p id="ab-p3">صاحب قناة يوتيوب "شريف يسري - Sherif Youssri" بـ <strong>449 ألف مشترك</strong> و658 فيديو، وتحقق فيديوهاته عشرات الآلاف إلى مئات الآلاف من المشاهدات.</p>
+          <p id="ab-p4">المحاور الأساسية في تحليلاته: تشكيلات الأهلي وصفقاته، نقاط الضعف والقوة للفرق المصرية، مقارنات اللاعبين، وحظوظ الدوري والبطولات الإفريقية.</p>
+        </div>
+        <div>
+          <div class="about-highlights">
+            <div class="highlight-card">
+              <div class="num">449K</div>
+              <div class="desc">مشترك يوتيوب</div>
+            </div>
+            <div class="highlight-card">
+              <div class="num">658</div>
+              <div class="desc">فيديو تحليلي</div>
+            </div>
+            <div class="highlight-card">
+              <div class="num">10+</div>
+              <div class="desc">سنة خبرة</div>
+            </div>
+            <div class="highlight-card">
+              <div class="num">Al Ahly TV</div>
+              <div class="desc">محلل ومعلق</div>
+            </div>
+          </div>
+          <div style="margin-top:1.5rem;background:var(--bg3);border:1px solid var(--border);border-right:3px solid var(--green);padding:1.2rem;border-radius:4px;">
+            <p style="font-size:0.8rem;color:var(--text2);line-height:1.7;" id="ab-quote">
+              "هدفي إن كل مشجع مصري يفهم اللي بيحصل في الملعب مش بس يشوفه — الكرة فن، والفن محتاج شرح."
+            </p>
+            <p style="font-size:0.78rem;color:var(--gold);margin-top:8px;font-weight:700;">— شريف يسري</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="fade-up">
+      <div class="section-header">
+        <div class="section-label">الإعلام</div>
+        <h2 class="section-title">الظهورات <em>الإعلامية</em></h2>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;">
+        <div class="highlight-card" style="text-align:center;padding:1.5rem;">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem;">📺</div>
+          <div style="font-weight:700;color:var(--gold);margin-bottom:0.3rem;">Al Ahly TV</div>
+          <div style="font-size:0.78rem;color:var(--text2);">محلل تكتيكي رسمي</div>
+        </div>
+        <div class="highlight-card" style="text-align:center;padding:1.5rem;">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem;">📺</div>
+          <div style="font-weight:700;color:var(--gold);margin-bottom:0.3rem;">OnTime Sports</div>
+          <div style="font-size:0.78rem;color:var(--text2);">ضيف تكتيكي</div>
+        </div>
+        <div class="highlight-card" style="text-align:center;padding:1.5rem;">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem;">📺</div>
+          <div style="font-weight:700;color:var(--gold);margin-bottom:0.3rem;">القاهرة الإخبارية</div>
+          <div style="font-size:0.78rem;color:var(--text2);">تحليل المباريات</div>
+        </div>
+        <div class="highlight-card" style="text-align:center;padding:1.5rem;">
+          <div style="font-size:1.5rem;margin-bottom:0.5rem;">📺</div>
+          <div style="font-weight:700;color:var(--gold);margin-bottom:0.3rem;">الحياة</div>
+          <div style="font-size:0.78rem;color:var(--text2);">ضيف تكتيكي</div>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <p>© 2025 شريف يسري</p>
+      <p><a href="#" onclick="showPage('contact')">تواصل معنا</a></p>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: SERVICES
+══════════════════════════════════════════ -->
+<div id="page-services" class="page">
+  <div style="padding-top:64px; min-height:100vh;">
+    <section>
+      <div class="section-header fade-up">
+        <div class="section-label">ما نقدمه</div>
+        <h2 class="section-title">الخدمات <em>التكتيكية</em></h2>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr;gap:2rem;max-width:800px;" class="fade-up">
+
+        <div class="service-card" style="display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:start;">
+          <div style="font-size:3rem;">🎬</div>
+          <div>
+            <div class="service-name" style="font-size:1.3rem;" id="srv1-name">تحليل المباريات</div>
+            <div class="service-desc" id="srv1-desc">تقرير فيديو تكتيكي مفصل — بيغطي التشكيل، الخطة التكتيكية، أبرز اللحظات، نقاط الضعف والقوة لكلا الفريقين. مناسب للأندية والمدربين والمنصات الإعلامية.</div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+              <span class="service-tag">فيديو تكتيكي</span>
+              <span class="service-tag">للأندية والمنصات</span>
+            </div>
+            <a href="#" class="btn-primary" onclick="whatsappContact('تحليل مباريات')" id="srv1-btn">📱 تواصل على واتساب</a>
+          </div>
+        </div>
+
+        <div class="service-card" style="display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:start;">
+          <div style="font-size:3rem;">♟️</div>
+          <div>
+            <div class="service-name" style="font-size:1.3rem;" id="srv2-name">الاستشارات التكتيكية</div>
+            <div class="service-desc" id="srv2-desc">جلسات تكتيكية مخصصة مع المدربين والأندية — تطوير الخطة التكتيكية، تحليل المنافسين، اقتراح التعديلات، وجلسات شهرية ثابتة للمتابعة المستمرة.</div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+              <span class="service-tag">للمدربين</span>
+              <span class="service-tag">للأندية</span>
+              <span class="service-tag">جلسات شهرية</span>
+            </div>
+            <a href="#" class="btn-primary" onclick="whatsappContact('استشارات تكتيكية')" id="srv2-btn">📱 تواصل على واتساب</a>
+          </div>
+        </div>
+
+        <div class="service-card" style="display:grid;grid-template-columns:auto 1fr;gap:2rem;align-items:start;">
+          <div style="font-size:3rem;">📊</div>
+          <div>
+            <div class="service-name" style="font-size:1.3rem;" id="srv3-name">تقارير اللاعبين — Scouting Reports</div>
+            <div class="service-desc" id="srv3-desc">تقارير Scouting احترافية للاعبين — تقييم شامل بالأرقام والمؤشرات الفنية والتكتيكية، نقاط القوة والضعف، الملاءمة للنظام التكتيكي. مصممة للأندية التي تبحث عن ضم لاعبين.</div>
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;">
+              <span class="service-tag">B2B</span>
+              <span class="service-tag">للأندية فقط</span>
+              <span class="service-tag">تقرير مفصل</span>
+            </div>
+            <a href="#" class="btn-primary" onclick="whatsappContact('Scouting Report')" id="srv3-btn">📱 تواصل على واتساب</a>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <footer>
+      <p>© 2025 شريف يسري</p>
+      <p><a href="#" onclick="showPage('contact')">تواصل معنا</a></p>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: BLOG
+══════════════════════════════════════════ -->
+<div id="page-blog" class="page">
+  <div style="padding-top:64px; min-height:100vh;">
+    <section>
+      <div class="section-header fade-up">
+        <div class="section-label">التحليلات</div>
+        <h2 class="section-title">المدونة <em>التكتيكية</em></h2>
+      </div>
+
+      <!-- Search -->
+      <div style="margin-bottom:2.5rem;" class="fade-up">
+        <div style="position:relative;max-width:500px;">
+          <input type="text" id="blogSearch" placeholder="ابحث في المقالات..." oninput="filterBlog()"
+            style="width:100%;background:var(--bg2);border:1px solid var(--border);color:var(--text);
+            padding:12px 20px 12px 50px;border-radius:6px;font-family:var(--font);font-size:0.9rem;
+            outline:none;transition:border 0.2s;"
+            onfocus="this.style.borderColor='var(--gold)'"
+            onblur="this.style.borderColor='var(--border)'">
+          <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text2);">🔍</span>
+        </div>
+      </div>
+
+      <!-- Posts -->
+      <div id="blogPosts" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.5rem;">
+        <!-- filled by JS from Google Sheets -->
+        <div class="fade-up" style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text2);">
+          <div style="font-size:2rem;margin-bottom:1rem;">📝</div>
+          <p>جاري تحميل المقالات...</p>
+        </div>
+      </div>
+
+    </section>
+    <footer>
+      <p>© 2025 شريف يسري</p>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: MEDIA
+══════════════════════════════════════════ -->
+<div id="page-media" class="page">
+  <div style="padding-top:64px; min-height:100vh;">
+    <section>
+      <div class="section-header fade-up">
+        <div class="section-label">فيديوهات</div>
+        <h2 class="section-title">الظهورات <em>الإعلامية</em></h2>
+      </div>
+      <div id="mediaGrid" class="media-grid fade-up">
+        <div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text2);">
+          <div style="font-size:2rem;margin-bottom:1rem;">🎬</div>
+          <p>جاري تحميل الفيديوهات...</p>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <p>© 2025 شريف يسري</p>
+    </footer>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PAGE: CONTACT
+══════════════════════════════════════════ -->
+<div id="page-contact" class="page">
+  <div style="padding-top:64px; min-height:100vh;">
+    <section>
+      <div class="section-header fade-up">
+        <div class="section-label">تواصل</div>
+        <h2 class="section-title">ابعت <em>لشريف</em> مباشرة</h2>
+      </div>
+      <div class="contact-grid fade-up">
+        <div class="contact-intro">
+          <p id="ct-p1">سواء كنت ناديًا يبحث عن تقرير scouting، مدربًا محتاجًا استشارة تكتيكية، أو منصة إعلامية — شريف متاح للتواصل المباشر.</p>
+          <p id="ct-p2">بيرد على الواتساب في أسرع وقت. مفيش وسيط — التواصل مباشر مع شريف.</p>
+          <div class="contact-methods">
+            <a href="#" onclick="whatsappContact('استفسار عام')" class="contact-method">
+              <span class="contact-method-icon">💬</span>
+              <div class="contact-method-info">
+                <span class="contact-method-label">واتساب</span>
+                <span class="contact-method-val" id="ct-wa">تواصل مباشر</span>
+              </div>
+            </a>
+            <a href="mailto:sherif@example.com" class="contact-method">
+              <span class="contact-method-icon">📧</span>
+              <div class="contact-method-info">
+                <span class="contact-method-label">إيميل</span>
+                <span class="contact-method-val" id="ct-email">sherif@example.com</span>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div>
+          <div style="background:var(--bg2);border:1px solid var(--border);border-radius:6px;padding:2rem;">
+            <p style="font-weight:700;color:var(--gold);margin-bottom:1.5rem;" id="ct-form-title">اختار الخدمة اللي محتاجها</p>
+            <div style="display:flex;flex-direction:column;gap:0.75rem;">
+              <button onclick="whatsappContact('تحليل مباريات')" class="btn-secondary" style="justify-content:flex-start;gap:1rem;">
+                🎬 <span id="ct-s1">تحليل مباريات</span>
+              </button>
+              <button onclick="whatsappContact('استشارات تكتيكية')" class="btn-secondary" style="justify-content:flex-start;gap:1rem;">
+                ♟️ <span id="ct-s2">استشارات تكتيكية</span>
+              </button>
+              <button onclick="whatsappContact('Scouting Report')" class="btn-secondary" style="justify-content:flex-start;gap:1rem;">
+                📊 <span id="ct-s3">تقرير لاعب (Scouting)</span>
+              </button>
+              <button onclick="whatsappContact('استفسار عام')" class="btn-secondary" style="justify-content:flex-start;gap:1rem;">
+                💬 <span id="ct-s4">استفسار عام</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <p>© 2025 شريف يسري</p>
+    </footer>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════
+// GOOGLE SHEETS API
+// ═══════════════════════════════════════
+const SHEETS_API = ''; // حط هنا الـ URL بعد Deploy من Apps Script
+
+async function sheetsGet(action, params = {}) {
+  if (!SHEETS_API) return null;
+  try {
+    const q = new URLSearchParams({ action, ...params }).toString();
+    const res = await fetch(`${SHEETS_API}?${q}`);
+    return await res.json();
+  } catch(e) { console.log('Sheets error:', e); return null; }
+}
+
+async function sheetsPost(action, data = {}) {
+  if (!SHEETS_API) return null;
+  try {
+    const res = await fetch(SHEETS_API, {
+      method: 'POST',
+      body: JSON.stringify({ action, ...data }),
+      headers: { 'Content-Type': 'application/json' }
+    });
+    return await res.json();
+  } catch(e) { console.log('Sheets error:', e); return null; }
+}
+
+// ═══════════════════════════════════════
+// CONFIG — يتحكم فيه شريف من الـ Admin
+// ═══════════════════════════════════════
+const CONFIG = {
+  whatsapp: '201007554004', // رقم شريف
+  email: 'sherif@example.com',
+  social: [
+    { name: 'يوتيوب', handle: 'شريف يسري • 449K مشترك', icon: '▶️', url: 'https://youtube.com/@-sherifyoussri', color: '#FF0000' },
+    { name: 'فيسبوك', handle: 'SherifYoussriEz', icon: '📘', url: 'https://facebook.com/SherifYoussriEz', color: '#1877F2' },
+    { name: 'انستجرام', handle: '@sherifyoussri', icon: '📷', url: '#', color: '#E4405F' },
+  ],
+  // فيديوهات تيمبل — هتيجي من Google Sheets
+  videos: [
+    { id: 'mYx8WOLcHyw', title: 'تحليل تكتيكي — الأهلي', channel: 'Al Ahly TV', pages: ['home','media'] },
+    { id: 'rIerD_AfMIM', title: 'دينامو الوسط وكاسر الضغط', channel: 'شريف يسري', pages: ['media'] },
+    { id: 'mYx8WOLcHyw', title: 'الحل السحري لبن رمضان', channel: 'شريف يسري', pages: ['media'] },
+  ],
+  // مقالات تيمبل
+  posts: [
+    { title: 'لماذا الأهلي يحتاج دينامو في الوسط؟', date: '٢٠٢٥/٠١/١٠', excerpt: 'تحليل تفصيلي لنقاط الضعف في خط وسط الأهلي وكيف يمكن معالجتها تكتيكياً في الموسم الجديد...', tags: ['الأهلي', 'تكتيك'] },
+    { title: 'إسلام عيسى: القطعة المفقودة', date: '٢٠٢٥/٠١/٠٥', excerpt: 'كيف يغير إسلام عيسى ديناميكية الهجوم المصري؟ قراءة في أرقامه ودوره الفعلي على أرض الملعب...', tags: ['لاعبون', 'المنتخب'] },
+    { title: 'تريزيجيه vs إمام عاشور: من الأفضل؟', date: '٢٠٢٤/١٢/٢٨', excerpt: 'مقارنة فنية شاملة بين لاعبين مصريين من الطراز الأول — الأرقام والمؤشرات التكتيكية تتكلم...', tags: ['مقارنة', 'لاعبون'] },
+    { title: 'خطة الأهلي في إياب الكأس', date: '٢٠٢٤/١٢/٢٠', excerpt: 'قراءة ما قبل المباراة — ماذا يمتلك الأهلي من أوراق تكتيكية لتحقيق العبور في مباراة الإياب؟', tags: ['الأهلي', 'تحليل مسبق'] },
+  ]
+};
+
+// ═══════════════════════════════════════
+// TRANSLATIONS
+// ═══════════════════════════════════════
+const TRANS = {
+  ar: {
+    'h-badge': 'قناة Al Ahly TV — المحلل الرسمي',
+    'h-name-1': 'شريف', 'h-name-2': 'يسري',
+    'h-title': 'محلل تكتيكي وفني — كرة القدم المصرية والعالمية',
+    'h-tagline': '"الملعب بيتكلم أرقام — أنا بترجملك المعنى"',
+    'h-s1': 'مشترك يوتيوب', 'h-s2': 'فيديو تحليلي', 'h-s3': 'سنوات خبرة',
+    'h-cta1': '🎯 اطلب خدمة', 'h-cta2': 'تعرف على شريف',
+    'h-proof-label': 'ظهر على',
+  },
+  en: {
+    'h-badge': 'Al Ahly TV — Official Analyst',
+    'h-title': 'Tactical & Technical Analyst — Egyptian & World Football',
+    'h-tagline': '"The pitch speaks numbers — I translate the meaning"',
+    'h-s1': 'YouTube Subscribers', 'h-s2': 'Tactical Videos', 'h-s3': 'Years Experience',
+    'h-cta1': '🎯 Request a Service', 'h-cta2': 'About Sherif',
+    'h-proof-label': 'Featured on',
+  }
+};
+
+let currentLang = 'ar';
+let currentPage = 'home';
+let allPosts = [...CONFIG.posts];
+
+// ═══════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + name);
+  if (el) {
+    el.classList.add('active');
+    currentPage = name;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(initFadeUps, 100);
+    if (name === 'home') renderSocial();
+    if (name === 'media') renderMedia();
+    if (name === 'blog') renderBlog();
+  }
+}
+
+// ═══════════════════════════════════════
+// MOBILE MENU
+// ═══════════════════════════════════════
+function toggleMobileMenu() {
+  document.getElementById('navLinks').classList.toggle('open');
+}
+
+// ═══════════════════════════════════════
+// LANGUAGE SWITCH
+// ═══════════════════════════════════════
+function toggleLang() {
+  currentLang = currentLang === 'ar' ? 'en' : 'ar';
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+  document.getElementById('langBtn').textContent = currentLang === 'ar' ? 'EN' : 'ع';
+  document.getElementById('langBtnMobile').textContent = currentLang === 'ar' ? 'EN' : 'ع';
+}
+
+// ═══════════════════════════════════════
+// SOCIAL RENDER
+// ═══════════════════════════════════════
+function renderSocial() {
+  const el = document.getElementById('socialLinks');
+  if (!el) return;
+  el.innerHTML = CONFIG.social.map(s => `
+    <a href="${s.url}" target="_blank" class="social-card">
+      <span class="social-icon">${s.icon}</span>
+      <div class="social-info">
+        <span class="social-name">${s.name}</span>
+        <span class="social-handle">${s.handle}</span>
+      </div>
+    </a>
+  `).join('');
+}
+
+// ═══════════════════════════════════════
+// MEDIA RENDER
+// ═══════════════════════════════════════
+function getYouTubeId(url) {
+  if (!url) return null;
+  const m = url.match(/(?:youtu\.be\/|v=|embed\/)([a-zA-Z0-9_-]{11})/);
+  return m ? m[1] : url;
+}
+
+function renderVideoCards(videos) {
+  const el = document.getElementById('mediaGrid');
+  if (!el) return;
+  if (!videos || !videos.length) {
+    el.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text2);">لا توجد فيديوهات بعد</div>';
+    return;
+  }
+  el.innerHTML = videos.map(v => {
+    const vid = getYouTubeId(v.url || v.id || '');
+    return `
+      <div class="video-card">
+        <div class="video-thumb">
+          <iframe src="https://www.youtube.com/embed/${vid}"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen loading="lazy"></iframe>
+        </div>
+        <div class="video-info">
+          <div class="video-title">${v.title}</div>
+          <div class="video-channel">📺 ${v.channel}</div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function renderMedia() {
+  const el = document.getElementById('mediaGrid');
+  if (!el) return;
+  el.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text2);">⏳ جاري التحميل...</div>';
+  const data = await sheetsGet('getVideos', { page: 'media' });
+  renderVideoCards(data && data.length ? data : CONFIG.videos);
+}
+
+// ═══════════════════════════════════════
+// BLOG RENDER
+// ═══════════════════════════════════════
+function renderPostCards(posts) {
+  const el = document.getElementById('blogPosts');
+  if (!el) return;
+  if (!posts || !posts.length) {
+    el.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text2);">لا توجد نتائج</div>';
+    return;
+  }
+  el.innerHTML = posts.map(p => {
+    const tags = typeof p.tags === 'string' ? p.tags.split(',') : (p.tags || []);
+    return `
+    <div class="service-card fade-up visible" style="cursor:default;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <span style="font-size:0.75rem;color:var(--text2);">${p.date}</span>
+        <div style="display:flex;gap:0.4rem;flex-wrap:wrap;">
+          ${tags.map(t=>`<span class="service-tag">${t.trim()}</span>`).join('')}
+        </div>
+      </div>
+      <div class="service-name" style="font-size:1rem;margin-bottom:0.75rem;">${p.title}</div>
+      <div class="service-desc">${p.excerpt}</div>
+      <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);">
+        <button onclick="openPost('${p.id || p.title}')" 
+          class="btn-secondary" style="padding:8px 16px;font-size:0.82rem;">
+          اقرأ المقال
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function renderBlog(posts) {
+  const el = document.getElementById('blogPosts');
+  if (!el) return;
+  if (posts) { renderPostCards(posts); return; }
+  el.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:3rem;color:var(--text2);">⏳ جاري تحميل المقالات...</div>';
+  const data = await sheetsGet('getArticles');
+  allPosts = data && data.length ? data : CONFIG.posts;
+  renderPostCards(allPosts);
+}
+
+function filterBlog() {
+  const q = document.getElementById('blogSearch').value.toLowerCase();
+  const filtered = allPosts.filter(p =>
+    p.title.includes(q) || (p.excerpt||'').includes(q) ||
+    (typeof p.tags === 'string' ? p.tags : (p.tags||[]).join(',')).includes(q)
+  );
+  renderPostCards(filtered);
+}
+
+async function openPost(id) {
+  const data = await sheetsGet('getArticle', { id }) || allPosts.find(p => p.id === id || p.title === id);
+  if (!data || data.error) return;
+  // عرض المقال في modal بسيط
+  const modal = document.createElement('div');
+  modal.style.cssText = `position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.92);
+    overflow-y:auto;padding:2rem;display:flex;justify-content:center;`;
+  modal.innerHTML = `
+    <div style="max-width:720px;width:100%;background:var(--bg2);border:1px solid var(--border);
+      border-radius:8px;padding:2.5rem;position:relative;height:fit-content;margin:auto;">
+      <button onclick="this.closest('div[style]').remove()" 
+        style="position:absolute;top:1rem;left:1rem;background:none;border:none;
+        color:var(--text2);font-size:1.5rem;cursor:pointer;">✕</button>
+      <div style="font-size:0.75rem;color:var(--text2);margin-bottom:0.5rem;">${data.date}</div>
+      <h2 style="font-size:1.5rem;font-weight:900;color:var(--text);margin-bottom:1.5rem;line-height:1.3;">${data.title}</h2>
+      <div style="color:var(--text2);line-height:2;font-size:0.95rem;white-space:pre-wrap;">${data.content || data.excerpt}</div>
+      <div style="margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);">
+        <p style="font-size:0.8rem;color:var(--text2);margin-bottom:1rem;font-weight:700;">التعليقات</p>
+        <div id="modal-comments-${data.id}" style="margin-bottom:1rem;"></div>
+        <div style="display:flex;flex-direction:column;gap:0.75rem;">
+          <input type="text" id="cmt-name" placeholder="اسمك" 
+            style="background:var(--bg3);border:1px solid var(--border);color:var(--text);
+            padding:10px 14px;border-radius:6px;font-family:var(--font);font-size:0.85rem;outline:none;">
+          <textarea id="cmt-text" placeholder="اكتب تعليقك..." rows="3"
+            style="background:var(--bg3);border:1px solid var(--border);color:var(--text);
+            padding:10px 14px;border-radius:6px;font-family:var(--font);font-size:0.85rem;
+            outline:none;resize:none;"></textarea>
+          <button onclick="submitComment('${data.id}')" 
+            class="btn-primary" style="width:fit-content;">إرسال التعليق</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.appendChild(modal);
+  loadComments(data.id);
+}
+
+async function loadComments(articleId) {
+  const el = document.getElementById(`modal-comments-${articleId}`);
+  if (!el) return;
+  const data = await sheetsGet('getComments', { article_id: articleId });
+  if (!data || !data.length) { el.innerHTML = '<p style="font-size:0.8rem;color:var(--text2);">لا توجد تعليقات بعد</p>'; return; }
+  el.innerHTML = data.map(c => `
+    <div style="background:var(--bg3);border:1px solid var(--border);padding:0.75rem 1rem;
+      border-radius:6px;margin-bottom:0.5rem;">
+      <div style="font-size:0.78rem;font-weight:700;color:var(--gold);margin-bottom:4px;">${c.name}</div>
+      <div style="font-size:0.85rem;color:var(--text2);">${c.text}</div>
+    </div>`).join('');
+}
+
+async function submitComment(articleId) {
+  const name = document.getElementById('cmt-name').value.trim();
+  const text = document.getElementById('cmt-text').value.trim();
+  if (!name || !text) { alert('اكتب اسمك والتعليق'); return; }
+  await sheetsPost('submitComment', { data: { name, text, article_id: articleId } });
+  document.getElementById('cmt-name').value = '';
+  document.getElementById('cmt-text').value = '';
+  alert('✅ تم إرسال تعليقك وينتظر المراجعة');
+}
+
+// ═══════════════════════════════════════
+// WHATSAPP
+// ═══════════════════════════════════════
+function whatsappContact(service) {
+  const msg = encodeURIComponent(`مرحبًا شريف، أريد الاستفسار عن: ${service}`);
+  window.open(`https://wa.me/${CONFIG.whatsapp}?text=${msg}`, '_blank');
+}
+
+// ═══════════════════════════════════════
+// SCROLL NAV
+// ═══════════════════════════════════════
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ═══════════════════════════════════════
+// FADE UPS ON SCROLL
+// ═══════════════════════════════════════
+function initFadeUps() {
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-up:not(.visible)').forEach(el => obs.observe(el));
+}
+
+// ═══════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  renderSocial();
+  initFadeUps();
+});
+</script>
+</body>
+</html>
