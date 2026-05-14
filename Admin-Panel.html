@@ -612,9 +612,12 @@ async function aGet(action){
   return await r.json();
 }
 async function aPost(data){
-  // بنبعت POST كـ GET params عشان Apps Script CORS
-  const params = new URLSearchParams(data).toString();
-  const r=await fetch(`${APPS_SCRIPT_URL}?${params}`,{redirect:'follow'});
+  // بنبني الـ URL يدوياً عشان URLSearchParams بيكسر الـ values
+  const params = Object.keys(data)
+    .filter(k => data[k] !== null && data[k] !== undefined)
+    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
+    .join('&');
+  const r = await fetch(APPS_SCRIPT_URL + '?' + params, {redirect:'follow'});
   return await r.json();
 }
 

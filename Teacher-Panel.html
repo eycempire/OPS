@@ -701,8 +701,11 @@ async function get(action) {
   return await res.json();
 }
 async function post(data){
-  // GET params عشان CORS
-  const params = new URLSearchParams(data).toString();
+  // بنبني الـ URL يدوياً عشان URLSearchParams بيكسر الـ values
+  const params = Object.keys(data)
+    .filter(k => data[k] !== null && data[k] !== undefined)
+    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
+    .join('&');
   const res = await fetch(APPS_SCRIPT_URL + '?' + params, {redirect:'follow'});
   return await res.json();
 },body:JSON.stringify(data)});
