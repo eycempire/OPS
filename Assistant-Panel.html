@@ -6,7 +6,6 @@
 <title>Assistant Panel — OPS Passion School</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-<script src="config.js"></script>
 <style>
 :root {
   --bg:       #F0EDE8;
@@ -895,6 +894,7 @@ tr:hover td { background: rgba(10,37,64,0.02); }
 <div class="toast" id="toast"></div>
 
 <script>
+// APPS_SCRIPT_URL loaded from config.js
 
 let currentUser = null;
 let pendingId   = null;
@@ -1301,9 +1301,12 @@ async function get(action) {
   return await res.json();
 }
 
-async function post(data) {
-  const res = await fetch(APPS_SCRIPT_URL, {
-    method:'POST', headers:{'Content-Type':'text/plain'},
+async function post(data){
+  // GET params عشان CORS
+  const params = new URLSearchParams(data).toString();
+  const res = await fetch(APPS_SCRIPT_URL + '?' + params, {redirect:'follow'});
+  return await res.json();
+},
     body: JSON.stringify(data)
   });
   return await res.json();

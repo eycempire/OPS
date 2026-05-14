@@ -6,8 +6,7 @@
 <title>Teacher Panel — OPS Passion School</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;900&family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
-<script src="config.js"></script>
-  <style>
+<style>
 :root {
   --bg:      #F0F7F4;
   --bg2:     #E3F0EC;
@@ -400,6 +399,7 @@ tr:hover td { background:rgba(5,150,105,.02); }
 <div class="toast" id="toast"></div>
 
 <script>
+// APPS_SCRIPT_URL loaded from config.js
 let currentUser = null;
 let myStudents  = [];
 let sessionHistory = [];
@@ -700,8 +700,12 @@ async function get(action) {
   const res=await fetch(url,{redirect:'follow'});
   return await res.json();
 }
-async function post(data) {
-  const res=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});
+async function post(data){
+  // GET params عشان CORS
+  const params = new URLSearchParams(data).toString();
+  const res = await fetch(APPS_SCRIPT_URL + '?' + params, {redirect:'follow'});
+  return await res.json();
+},body:JSON.stringify(data)});
   return await res.json();
 }
 

@@ -606,9 +606,17 @@ function filterStudents(){const s=document.getElementById('statusFilter').value;
 function handleSearch(q){if(!q)return;const lq=q.toLowerCase();const f=allStudentsCache.filter(s=>(s.childName||'').toLowerCase().includes(lq)||(s.parentName||'').toLowerCase().includes(lq)||(s.studentId||'').toLowerCase().includes(lq));if(f.length>0)rAllStudents(f,document.getElementById('allStudentsBody'));}
 async function testConnection(){document.getElementById('connStatus').textContent='جاري الاختبار...';try{const r=await aGet('ping');document.getElementById('connStatus').textContent=r.message||'✅ متصل';document.getElementById('connStatus').style.color='var(--green)';}catch(e){document.getElementById('connStatus').textContent='❌ لا يوجد اتصال';document.getElementById('connStatus').style.color='var(--red)';}}
 
-// API
-async function aGet(action){const r=await fetch(`${APPS_SCRIPT_URL}?action=${action}&staffId=${currentUser?.staffId||''}`,{redirect:'follow'});return await r.json();}
-async function aPost(data){const r=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});return await r.json();}
+// API — كل الـ requests بتتبعت كـ GET عشان CORS
+async function aGet(action){
+  const r=await fetch(`${APPS_SCRIPT_URL}?action=${action}&staffId=${currentUser?.staffId||''}`,{redirect:'follow'});
+  return await r.json();
+}
+async function aPost(data){
+  // بنبعت POST كـ GET params عشان Apps Script CORS
+  const params = new URLSearchParams(data).toString();
+  const r=await fetch(`${APPS_SCRIPT_URL}?${params}`,{redirect:'follow'});
+  return await r.json();
+}
 
 // HELPERS
 function closeModal(id){document.getElementById(id).classList.remove('open');pendingStudentId=null;}
