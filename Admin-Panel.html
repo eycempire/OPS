@@ -612,13 +612,25 @@ async function aGet(action){
   return await r.json();
 }
 async function aPost(data){
-  // بنبني الـ URL يدوياً عشان URLSearchParams بيكسر الـ values
-  const params = Object.keys(data)
-    .filter(k => data[k] !== null && data[k] !== undefined)
-    .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(data[k]))
-    .join('&');
-  const r = await fetch(APPS_SCRIPT_URL + '?' + params, {redirect:'follow'});
-  return await r.json();
+  // نبني الـ URL الكامل مع الـ params
+  const base = APPS_SCRIPT_URL;
+  const parts = [];
+  for (const k in data) {
+    if (data[k] !== null && data[k] !== undefined) {
+      parts.push(encodeURIComponent(k) + '=' + encodeURIComponent(String(data[k])));
+    }
+  }
+  const url = base + '?' + parts.join('&');
+  console.log('aPost URL:', url); // للتشخيص
+  try {
+    const r = await fetch(url, { redirect: 'follow' });
+    const text = await r.text();
+    console.log('aPost response:', text);
+    return JSON.parse(text);
+  } catch(e) {
+    console.error('aPost error:', e);
+    throw e;
+  }
 }
 
 // HELPERS
