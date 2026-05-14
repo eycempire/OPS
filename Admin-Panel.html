@@ -584,9 +584,14 @@ async function loadSessions(){
 // ACTIONS
 function openAcceptModal(id,name){pendingStudentId=id;document.getElementById('acceptStudentName').textContent=name;document.getElementById('acceptModal').classList.add('open');}
 async function confirmAccept(){
-  if(!pendingStudentId)return;closeModal('acceptModal');
-  try{const r=await aPost({action:'acceptStudent',studentId:pendingStudentId,staffId:currentUser.staffId});showToast(r.success?'✅ تم قبول الطالب بنجاح':'❌ '+(r.error||'خطأ'),r.success?'success':'error');if(r.success){addActivity('تم قبول طالب جديد','var(--green)');loadNewStudents();}}
-  catch(e){showToast('🔌 لا يوجد اتصال','error');}
+  if(!pendingStudentId)return;
+  const studentIdToAccept = pendingStudentId; // نحفظه قبل ما closeModal يمسحه
+  closeModal('acceptModal');
+  try{
+    const r=await aPost({action:'acceptStudent',studentId:studentIdToAccept,staffId:currentUser.staffId});
+    showToast(r.success?'✅ تم قبول الطالب بنجاح':'❌ '+(r.error||'خطأ'),r.success?'success':'error');
+    if(r.success){addActivity('تم قبول طالب جديد','var(--green)');loadNewStudents();}
+  }catch(e){showToast('🔌 لا يوجد اتصال','error');}
 }
 async function openCodeModal(id,name){
   document.getElementById('codeStudentName').textContent=name;document.getElementById('codeDisplay').textContent='جاري التوليد...';document.getElementById('codeModal').classList.add('open');
@@ -634,7 +639,7 @@ async function aPost(data){
 }
 
 // HELPERS
-function closeModal(id){document.getElementById(id).classList.remove('open');pendingStudentId=null;}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
 function showToast(msg,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast '+type;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3500);}
 function addActivity(text,color='var(--accent)'){const f=document.getElementById('activityFeed');const i=document.createElement('div');i.className='activity-item';i.innerHTML=`<div class="activity-dot" style="background:${color}"></div><div><div class="activity-text"><strong>${text}</strong></div><div class="activity-time">الآن</div></div>`;f.prepend(i);}
 function sBadge(s){const m={'جديد':'badge-new','قيد المراجعة':'badge-review','مقبول':'badge-accepted','ملتحق':'badge-enrolled','غير نشط':'badge-inactive'};return `<span class="badge ${m[s]||'badge-inactive'}">${s||'—'}</span>`;}

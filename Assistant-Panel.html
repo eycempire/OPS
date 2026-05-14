@@ -1220,9 +1220,10 @@ function openAcceptModal(id, name) {
 
 async function confirmAccept() {
   if (!pendingId) return;
+  const savedId = pendingId; // نحفظ قبل closeModal يمسحه
   closeModal('acceptModal');
   try {
-    const res = await post({ action:'acceptStudent', studentId:pendingId, staffId:currentUser.staffId });
+    const res = await post({ action:'acceptStudent', studentId:savedId, staffId:currentUser.staffId });
     showToast(res.success ? '✅ تم قبول الطالب' : '❌ ' + (res.error||'خطأ'), res.success?'ok':'err');
     if (res.success) { loadPipeline(); loadNewRequests(); }
   } catch(e) {
@@ -1320,7 +1321,6 @@ async function post(data){
 // ════════════════════════════
 function closeModal(id) {
   document.getElementById(id).classList.remove('open');
-  pendingId = null;
 }
 
 function showToast(msg, type='') {
