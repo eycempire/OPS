@@ -1310,10 +1310,6 @@ async function post(data){
     .join('&');
   const res = await fetch(APPS_SCRIPT_URL + '?' + params, {redirect:'follow'});
   return await res.json();
-},
-    body: JSON.stringify(data)
-  });
-  return await res.json();
 }
 
 // ════════════════════════════
